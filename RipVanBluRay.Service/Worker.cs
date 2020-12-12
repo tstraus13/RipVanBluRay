@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Collections.Generic;
+using static RipVanBluRay.Library.Linux;
 
 namespace RipVanBluRay.Service
 {
@@ -13,6 +14,7 @@ namespace RipVanBluRay.Service
     {
         private readonly ILogger<Worker> _logger;
         private Timer _timer;
+        private List<DiscDrive> DiscDrives = new List<DiscDrive>();
 
         public Worker(ILogger<Worker> logger)
         {
@@ -43,7 +45,7 @@ namespace RipVanBluRay.Service
         {
             if (LocalSystem.isWindows)
             {
-                // Detect Drives on Windows
+                // Detect Drives on Windows - wmic logicaldisk get deviceid, description
             }
 
             else if (LocalSystem.isLinux)
@@ -66,15 +68,5 @@ namespace RipVanBluRay.Service
         {
             _timer?.Dispose();
         }
-    }
-
-    public class LsBlkJson
-    {
-        public IList<LsBlkDevice> blockdevices { get; set; }
-    }
-
-    public class LsBlkDevice
-    {
-        public string name { get; set; }
     }
 }

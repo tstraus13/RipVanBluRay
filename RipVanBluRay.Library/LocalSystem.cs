@@ -7,8 +7,6 @@ namespace RipVanBluRay.Library
 {
     public static class LocalSystem
     {
-        private static List<DiscDrive> _DiskDrives = new List<DiscDrive>();
-
         /// <summary>
         /// Detects if the system is Windows
         /// </summary>
@@ -100,6 +98,19 @@ namespace RipVanBluRay.Library
             {
 
             }*/
+        }
+    }
+
+    public class Linux
+    {
+        public class LsBlkJson
+        {
+            public IList<LsBlkDevice> blockdevices { get; set; }
+        }
+
+        public class LsBlkDevice
+        {
+            public string name { get; set; }
         }
     }
 }
