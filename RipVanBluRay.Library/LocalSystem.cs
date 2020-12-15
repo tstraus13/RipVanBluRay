@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace RipVanBluRay.Library
@@ -142,6 +143,26 @@ namespace RipVanBluRay.Library
 
             }*/
         }
+
+        public static void EjectDisc(string driveId)
+        {
+            if (isWindows)
+            {
+                mciSendStringA("open " + driveId + " type CDaudio alias drive" + driveId[0], null, 0, 0);
+                mciSendStringA("set drive" + driveId[0] + " door open", null, 0, 0);
+            }
+            
+            else if (isLinux)
+            {
+                ExecuteCommand($"eject ");
+            }
+        }
+
+        [DllImport("winmm.dll", EntryPoint = "mciSendString")]
+        private static extern int mciSendStringA(string lpstrCommand, string lpstrReturnString,
+                            int uReturnLength, int hwndCallback);
+
+
     }
 
     public class Linux

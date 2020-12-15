@@ -21,6 +21,7 @@ namespace RipVanBluRay.Service
         {
             _logger = logger;
 
+            LocalSystem.EjectDisc("E:");
             DetectDiscDrives();
         }
 
