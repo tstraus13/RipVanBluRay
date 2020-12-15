@@ -9,6 +9,16 @@ namespace RipVanBluRay.Library
         public string Id { get; set; }
         public bool InUse { get; set; }
 
+        public DiscDrive()
+        {
+
+        }
+
+        public DiscDrive(string id)
+        {
+            Id = id;
+        }
+
         public string Path
         {
             get

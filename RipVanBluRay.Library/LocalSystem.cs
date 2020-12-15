@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RipVanBluRay.Library
 {
@@ -86,6 +87,48 @@ namespace RipVanBluRay.Library
                     return output;
                 else
                     return error;
+            }
+
+            return null;
+            /*else if (isMacOS)
+            {
+
+            }
+
+            else
+            {
+
+            }*/
+        }
+
+        public static Process ExecuteBackgroundCommand(string command, bool debug = false)
+        {
+            if (isWindows)
+            {
+                var processInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true
+                };
+                var process = Process.Start(processInfo);
+
+                return process;
+            }
+
+            else if (isLinux)
+            {
+                var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{command}\"")
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true
+                };
+                var process = Process.Start(processInfo);
+
+                return process;
             }
 
             return null;
