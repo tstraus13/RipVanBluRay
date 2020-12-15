@@ -143,20 +143,6 @@ namespace RipVanBluRay.Library
 
             }*/
         }
-
-        public static void EjectDisc(string driveId)
-        {
-            if (isWindows)
-            {
-                Windows.mciSendStringA("open " + driveId + " type CDaudio alias drive" + driveId[0], null, 0, 0);
-                Windows.mciSendStringA("set drive" + driveId[0] + " door open", null, 0, 0);
-            }
-            
-            else if (isLinux)
-            {
-                ExecuteCommand($"eject ");
-            }
-        }
     }
 
     public class Linux

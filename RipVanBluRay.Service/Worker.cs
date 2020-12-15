@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Collections.Generic;
 using static RipVanBluRay.Library.Linux;
 using System.IO;
+using System.Linq;
 
 namespace RipVanBluRay.Service
 {
@@ -21,7 +22,6 @@ namespace RipVanBluRay.Service
         {
             _logger = logger;
 
-            LocalSystem.EjectDisc("E:");
             DetectDiscDrives();
         }
 
@@ -65,7 +65,7 @@ namespace RipVanBluRay.Service
                 {
                     if (drive.DriveType == DriveType.CDRom)
                     {
-                        DiscDrives.Add(new DiscDrive(drive.Name));
+                        DiscDrives.Add(new DiscDrive(drive.Name.Take(2).ToString()));
                     }
                 }
             }
@@ -77,7 +77,7 @@ namespace RipVanBluRay.Service
                 var json = JsonSerializer.Deserialize<LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
 
                 foreach (var dev in json.blockdevices)
-                    Console.WriteLine(dev.name);
+                    DiscDrives.Add(new DiscDrive(dev.name));
             }
         }
 
@@ -85,7 +85,16 @@ namespace RipVanBluRay.Service
         {
             foreach (var drive in DiscDrives)
             {
-                _logger.LogInformation($"{DateTime.Now} - No Disc in {drive.Id}");
+                //_logger.LogInformation($"{DateTime.Now} - No Disc in {drive.Id}");
+                if (LocalSystem.isWindows)
+                {
+
+                }
+
+                else if (LocalSystem.isLinux)
+                {
+
+                }
             }
         }
 
