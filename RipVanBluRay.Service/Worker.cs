@@ -92,7 +92,6 @@ namespace RipVanBluRay.Service
 
         public void CheckForDisc(object state)
         {
-            DriveInfo.GetDrives();
             foreach (var drive in DiscDrives)
             {
                 _logger.LogInformation($"{DateTime.Now} - No Disc in {drive.Id}");
