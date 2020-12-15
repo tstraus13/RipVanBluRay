@@ -148,8 +148,8 @@ namespace RipVanBluRay.Library
         {
             if (isWindows)
             {
-                mciSendStringA("open " + driveId + " type CDaudio alias drive" + driveId[0], null, 0, 0);
-                mciSendStringA("set drive" + driveId[0] + " door open", null, 0, 0);
+                Windows.mciSendStringA("open " + driveId + " type CDaudio alias drive" + driveId[0], null, 0, 0);
+                Windows.mciSendStringA("set drive" + driveId[0] + " door open", null, 0, 0);
             }
             
             else if (isLinux)
@@ -157,12 +157,6 @@ namespace RipVanBluRay.Library
                 ExecuteCommand($"eject ");
             }
         }
-
-        [DllImport("winmm.dll", EntryPoint = "mciSendString")]
-        private static extern int mciSendStringA(string lpstrCommand, string lpstrReturnString,
-                            int uReturnLength, int hwndCallback);
-
-
     }
 
     public class Linux
@@ -176,5 +170,12 @@ namespace RipVanBluRay.Library
         {
             public string name { get; set; }
         }
+    }
+
+    public class Windows
+    {
+        [DllImport("winmm.dll", EntryPoint = "mciSendString")]
+        public static extern int mciSendStringA(string lpstrCommand, string lpstrReturnString,
+                            int uReturnLength, int hwndCallback);
     }
 }

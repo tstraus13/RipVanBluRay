@@ -48,7 +48,7 @@ namespace RipVanBluRay.Service
             if (LocalSystem.isWindows)
             {
                 // Detect Drives on Windows - wmic logicaldisk get deviceid, description
-                var output = LocalSystem.ExecuteCommand("wmic logicaldisk get deviceid, description");
+                //var output = LocalSystem.ExecuteCommand("wmic logicaldisk get deviceid, description");
                 var drives = DriveInfo.GetDrives();
 
                 /*foreach (var line in output.Split(Environment.NewLine))
@@ -74,20 +74,10 @@ namespace RipVanBluRay.Service
             {
 
                 // lsblk -I 11 -d -J -o NAME - /bin/bash -c "lsblk -I 11 -d -J -o NAME"
-                //var json = JsonSerializer.Deserialize<LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
+                var json = JsonSerializer.Deserialize<LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
 
-                //foreach (var dev in json.blockdevices)
-                //    Console.WriteLine(dev.name);
-
-                var drives = DriveInfo.GetDrives();
-
-                foreach (var drive in drives)
-                {
-                    if (drive.DriveType == DriveType.CDRom)
-                    {
-                        DiscDrives.Add(new DiscDrive(drive.Name));
-                    }
-                }
+                foreach (var dev in json.blockdevices)
+                    Console.WriteLine(dev.name);
             }
         }
 
