@@ -6,9 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Collections.Generic;
-using static RipVanBluRay.Library.Linux;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 
 namespace RipVanBluRay.Service
 {
@@ -43,7 +43,7 @@ namespace RipVanBluRay.Service
             return Task.CompletedTask;
         }
 
-        public void DetectDiscDrives()
+        private void DetectDiscDrives()
         {
             if (LocalSystem.isWindows)
             {
@@ -60,28 +60,64 @@ namespace RipVanBluRay.Service
 
             else if (LocalSystem.isLinux)
             {
-                var json = JsonSerializer.Deserialize<LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
+                var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
 
                 foreach (var dev in json.blockdevices)
                     DiscDrives.Add(new DiscDrive(dev.name));
             }
         }
 
-        public void CheckForDisc(object state)
+        private void CheckForDisc(object state)
         {
             foreach (var drive in DiscDrives)
             {
                 //_logger.LogInformation($"{DateTime.Now} - No Disc in {drive.Id}");
-                if (LocalSystem.isWindows)
+                if (!drive.InUse)
                 {
+                    if (drive.DiscPresent)
+                    {
+                        switch (drive.DiscMedia)
+                        {
+                            case MediaType.Audio:
+                                RipMusic(drive);
+                                break;
+                            case MediaType.BluRay:
+                                RipMovie(drive);
+                                break;
+                            case MediaType.DVD:
+                                drive.InUse = true;
+                                var process = RipMovie(drive);
+                                process.Exited += RipFinished;
+                                break;
+                            case MediaType.None:
+                                break;
+                            default:
+                                break;
+                        }
+                    }
 
+                    else
+                        _logger.LogInformation($"{DateTime.Now} - {drive.Id} has no Disc present. Skipping...");
                 }
-
-                else if (LocalSystem.isLinux)
-                {
-
-                }
+                
+                else
+                    _logger.LogInformation($"{DateTime.Now} - {drive.Id} is currently in use. Must wait for it to finish. Skipping...");
             }
+        }
+
+        private Process RipMovie(DiscDrive drive)
+        {
+            return LocalSystem.ExecuteBackgroundCommand($"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength=3600 /home/tom/test");
+        }
+
+        private Process RipMusic(DiscDrive drive)
+        {
+            return null;
+        }
+
+        private void RipFinished(object sender, EventArgs e)
+        {
+            _logger.LogInformation($"{DateTime.Now} - RipFinished");
         }
 
         public void Dispose()

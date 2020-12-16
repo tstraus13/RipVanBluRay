@@ -127,7 +127,9 @@ namespace RipVanBluRay.Library
                     RedirectStandardError = true,
                     RedirectStandardOutput = true
                 };
-                var process = Process.Start(processInfo);
+                var process = new Process();
+                process.EnableRaisingEvents = true;
+                process = Process.Start(processInfo);
 
                 return process;
             }
@@ -145,7 +147,7 @@ namespace RipVanBluRay.Library
         }
     }
 
-    public class Linux
+    public static class Linux
     {
         public class LsBlkJson
         {
@@ -158,7 +160,7 @@ namespace RipVanBluRay.Library
         }
     }
 
-    public class Windows
+    public static class Windows
     {
         [DllImport("winmm.dll", EntryPoint = "mciSendString")]
         public static extern int mciSendStringA(string lpstrCommand, string lpstrReturnString,

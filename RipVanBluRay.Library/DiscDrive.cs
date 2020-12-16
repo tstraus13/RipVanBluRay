@@ -66,30 +66,33 @@ namespace RipVanBluRay.Library
             }
         }
 
-        public MediaType DiscMedia()
+        public MediaType DiscMedia
         {
-            if (LocalSystem.isLinux)
+            get
             {
-                switch (LocalSystem.ExecuteCommand($"udevadm info -q property {Path}"))
+                if (LocalSystem.isLinux)
                 {
-                    case string a when a.Contains("ID_CDROM_MEDIA_CD=1") && a.Contains("ID_CDROM_MEDIA_TRACK_COUNT_AUDIO"):
-                        return MediaType.Audio;
-                    case string a when a.Contains("ID_CDROM_MEDIA_BD=1"):
-                        return MediaType.BluRay;
-                    case string a when a.Contains("ID_CDROM_MEDIA_DVD=1"):
-                        return MediaType.DVD;
-                    default:
-                        return MediaType.None;
+                    switch (LocalSystem.ExecuteCommand($"udevadm info -q property {Path}"))
+                    {
+                        case string a when a.Contains("ID_CDROM_MEDIA_CD=1") && a.Contains("ID_CDROM_MEDIA_TRACK_COUNT_AUDIO"):
+                            return MediaType.Audio;
+                        case string a when a.Contains("ID_CDROM_MEDIA_BD=1"):
+                            return MediaType.BluRay;
+                        case string a when a.Contains("ID_CDROM_MEDIA_DVD=1"):
+                            return MediaType.DVD;
+                        default:
+                            return MediaType.None;
+                    }
                 }
-            }
 
-            else if (LocalSystem.isWindows)
-            {
-                return MediaType.None;
-            }
+                else if (LocalSystem.isWindows)
+                {
+                    return MediaType.None;
+                }
 
-            else
-                return MediaType.None;
+                else
+                    return MediaType.None;
+            }
         }
 
         public void Eject()
