@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using System.Linq;
 
 namespace RipVanBluRay.Library
 {
@@ -47,6 +49,20 @@ namespace RipVanBluRay.Library
                     return Id[0].ToString();
                 else
                     return null;
+            }
+        }
+
+        public bool DiscPresent
+        {
+            get
+            {
+                if (LocalSystem.isLinux)
+                    return !string.IsNullOrEmpty(LocalSystem.ExecuteCommand($"blkid {Path}"));
+                
+                else if (LocalSystem.isWindows)
+                    return DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path).IsReady;
+                
+                return false;
             }
         }
 
