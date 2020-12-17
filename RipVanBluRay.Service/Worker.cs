@@ -21,8 +21,7 @@ namespace RipVanBluRay.Service
         {
             _logger = logger;
 
-            var test = LocalSystem.UserDirectory;
-
+            Settings.Init();
             DetectDiscDrives();
         }
 
@@ -110,9 +109,9 @@ namespace RipVanBluRay.Service
             _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
 
             if (LocalSystem.isWindows)
-                return LocalSystem.ExecuteBackgroundCommand($@"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} {Settings.TempDirectory}\{drive.DriveLetter}");
+                return LocalSystem.ExecuteBackgroundCommand($@"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} {Path.Combine(Settings.TempDirectory, drive.DriveLetter)}");
             else
-                return LocalSystem.ExecuteBackgroundCommand($@"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} {Settings.TempDirectory}/{drive.Id}");
+                return LocalSystem.ExecuteBackgroundCommand($@"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} {Path.Combine(Settings.TempDirectory, drive.Id)}");
         }
 
         private Process RipMusic(DiscDrive drive)
