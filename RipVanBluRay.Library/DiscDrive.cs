@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 
 namespace RipVanBluRay.Library
 {
     public class DiscDrive
     {
         public string Id { get; set; }
-        
-        public bool InUse { get; set; }
 
+        public Process RipProcess {get; set;}
+        
         public DiscDrive()
         {
 
@@ -20,6 +21,14 @@ namespace RipVanBluRay.Library
         public DiscDrive(string id)
         {
             Id = id;
+        }
+
+        public bool InUse 
+        { 
+            get
+            {
+                return RipProcess == null ? false : true;
+            }
         }
 
         public string Path

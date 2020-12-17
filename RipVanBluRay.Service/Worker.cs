@@ -29,7 +29,7 @@ namespace RipVanBluRay.Service
         {
             _logger.LogInformation("Timed Hosted Service running.");
 
-            _timer = new Timer(CheckForDisc, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
+            _timer = new Timer(CheckDiscDrives, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;
         }
@@ -67,11 +67,10 @@ namespace RipVanBluRay.Service
             }
         }
 
-        private void CheckForDisc(object state)
+        private void CheckDiscDrives(object state)
         {
             foreach (var drive in DiscDrives)
             {
-                //_logger.LogInformation($"{DateTime.Now} - No Disc in {drive.Id}");
                 if (!drive.InUse)
                 {
                     if (drive.DiscPresent)
@@ -79,15 +78,13 @@ namespace RipVanBluRay.Service
                         switch (drive.DiscMedia)
                         {
                             case MediaType.Audio:
-                                RipMusic(drive);
+                                drive.RipProcess = RipMusic(drive);;
                                 break;
                             case MediaType.BluRay:
-                                RipMovie(drive);
+                                drive.RipProcess = RipMovie(drive);
                                 break;
                             case MediaType.DVD:
-                                drive.InUse = true;
-                                var process = RipMovie(drive);
-                                process.Exited += RipFinished;
+                                drive.RipProcess = RipMovie(drive);
                                 break;
                             case MediaType.None:
                                 break;
@@ -95,29 +92,28 @@ namespace RipVanBluRay.Service
                                 break;
                         }
                     }
-
-                    else
-                        _logger.LogInformation($"{DateTime.Now} - {drive.Id} has no Disc present. Skipping...");
                 }
-                
-                else
-                    _logger.LogInformation($"{DateTime.Now} - {drive.Id} is currently in use. Must wait for it to finish. Skipping...");
+
+                else if (drive.RipProcess.HasExited)
+                {
+                    _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Ejecting Disc...");
+
+                    drive.Eject();
+                    drive.RipProcess = null;
+                }
             }
         }
 
         private Process RipMovie(DiscDrive drive)
         {
+            _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
+
             return LocalSystem.ExecuteBackgroundCommand($"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength=3600 /home/tom/test");
         }
 
         private Process RipMusic(DiscDrive drive)
         {
             return null;
-        }
-
-        private void RipFinished(object sender, EventArgs e)
-        {
-            _logger.LogInformation($"{DateTime.Now} - RipFinished");
         }
 
         public void Dispose()
