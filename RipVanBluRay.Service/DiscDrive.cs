@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Diagnostics;
 
-namespace RipVanBluRay.Library
+namespace RipVanBluRay.Service
 {
     public class DiscDrive
     {

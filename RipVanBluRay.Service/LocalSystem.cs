@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace RipVanBluRay.Library
+namespace RipVanBluRay.Service
 {
     public static class LocalSystem
     {
@@ -26,6 +26,14 @@ namespace RipVanBluRay.Library
         /// </summary>
         /// <returns>True if the it is a MacOS System</returns>
         public static bool isMacOS { get { return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX); } }
+
+        public static string UserDirectory
+        {
+            get
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            }
+        }
 
         /// <summary>
         /// Removes the trailing slash from a path
