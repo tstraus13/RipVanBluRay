@@ -108,7 +108,7 @@ namespace RipVanBluRay.Service
         {
             _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
 
-            return LocalSystem.ExecuteBackgroundCommand($"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength=3600 /home/tom/test");
+            return LocalSystem.ExecuteBackgroundCommand($"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength=3600 /home/tom/Videos");
         }
 
         private Process RipMusic(DiscDrive drive)
