@@ -9,24 +9,6 @@ namespace RipVanBluRay.Service
 {
     public static class LocalSystem
     {
-        /// <summary>
-        /// Detects if the system is Windows
-        /// </summary>
-        /// <returns>True if the it is a Windows System</returns>
-        public static bool isWindows { get { return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows); } }
-
-        /// <summary>
-        /// Detects if the system is Linux
-        /// </summary>
-        /// <returns>True if the it is a Linux System</returns>
-        public static bool isLinux { get { return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux); } }
-
-        /// <summary>
-        /// Detects if the system is MacOS
-        /// </summary>
-        /// <returns>True if the it is a MacOS System</returns>
-        public static bool isMacOS { get { return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX); } }
-
         public static string UserDirectory
         {
             get
@@ -36,132 +18,50 @@ namespace RipVanBluRay.Service
         }
 
         /// <summary>
-        /// Removes the trailing slash from a path
-        /// </summary>
-        /// <param name="path">The path to check for a trailing slash</param>
-        /// <returns>The path without a trailing slash</returns>
-        public static string PathRemoveTrailingSlash(string path)
-        {
-            if (isWindows)
-                return path.Last() == '\\' ? path.Remove(path.LastIndexOf(@"\"), 1) : path;
-            else
-                return path.Last() == '/' ? path.Remove(path.LastIndexOf(@"/"), 1) : path;
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="command"></param>
         public static string ExecuteCommand(string command, string workingDir = null, bool debug = false)
         {
-            if (isWindows)
+            var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{command}\"")
             {
-                var processInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
-                };
-                var process = Process.Start(processInfo);
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
+            };
+            var process = Process.Start(processInfo);
 
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-                process.WaitForExit();
-                process.Close();
+            string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            process.Close();
 
-                if (string.IsNullOrEmpty(error))
-                    return output;
-                else
-                    return error;
-            }
-
-            else if (isLinux)
-            {
-                var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{command}\"")
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
-                };
-                var process = Process.Start(processInfo);
-
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-                process.WaitForExit();
-                process.Close();
-
-                if (string.IsNullOrEmpty(error))
-                    return output;
-                else
-                    return error;
-            }
-
-            return null;
-            /*else if (isMacOS)
-            {
-
-            }
-
+            if (string.IsNullOrEmpty(error))
+                return output;
             else
-            {
-
-            }*/
+                return error;
         }
 
         public static Process ExecuteBackgroundCommand(string command, string workingDir = null, Dictionary<string, string> env = null, bool debug = false)
         {
-            if (isWindows)
+
+            var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{command}\"")
             {
-                var processInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
-                };
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
+            };
                 
-                foreach (var var in env)
-                    processInfo.Environment.Add(var.Key, var.Value);
+            foreach (var var in env)
+                processInfo.Environment.Add(var.Key, var.Value);
 
-                var process = Process.Start(processInfo);
+            var process = Process.Start(processInfo);
 
-                return process;
-            }
-
-            else if (isLinux)
-            {
-                var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{command}\"")
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
-                };
-                
-                foreach (var var in env)
-                    processInfo.Environment.Add(var.Key, var.Value);
-
-                var process = Process.Start(processInfo);
-
-                return process;
-            }
-
-            return null;
-            /*else if (isMacOS)
-            {
-
-            }
-
-            else
-            {
-
-            }*/
+            return process;
         }
     }
 
@@ -176,12 +76,5 @@ namespace RipVanBluRay.Service
         {
             public string name { get; set; }
         }
-    }
-
-    public static class Windows
-    {
-        [DllImport("winmm.dll", EntryPoint = "mciSendString")]
-        public static extern int mciSendStringA(string lpstrCommand, string lpstrReturnString,
-                            int uReturnLength, int hwndCallback);
     }
 }

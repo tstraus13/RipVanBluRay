@@ -17,10 +17,7 @@ namespace RipVanBluRay.Service
         {
             get
             {
-                if (LocalSystem.isWindows)
-                    return System.IO.Path.Combine(Settings.TempDirectory, DriveLetter);
-                else
-                    return System.IO.Path.Combine(Settings.TempDirectory, Id);
+                return System.IO.Path.Combine(Settings.TempDirectory, Id);
             }
         }
 
@@ -28,10 +25,7 @@ namespace RipVanBluRay.Service
         {
             get
             {
-                if (LocalSystem.isWindows)
-                    return System.IO.Path.Combine(Settings.LogsDirectory, DriveLetter);
-                else
-                    return System.IO.Path.Combine(Settings.LogsDirectory, Id);
+                return System.IO.Path.Combine(Settings.LogsDirectory, Id);
             }
         }
         
@@ -59,25 +53,9 @@ namespace RipVanBluRay.Service
             {
                 if (!string.IsNullOrEmpty(Id))
                 {
-                    if (LocalSystem.isLinux)
-                        return $"/dev/{Id}";
-                    else if (LocalSystem.isWindows)
-                        return $@"{Id}\";
-                    else
-                        return null;
+                    return $"/dev/{Id}";
                 }
 
-                else
-                    return null;
-            }
-        }
-
-        public string DriveLetter
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(Id) && LocalSystem.isWindows)
-                    return Id[0].ToString();
                 else
                     return null;
             }
@@ -87,13 +65,7 @@ namespace RipVanBluRay.Service
         {
             get
             {
-                if (LocalSystem.isLinux)
-                    return LocalSystem.ExecuteCommand($"udevadm info -q property {Path}").Contains("ID_CDROM_MEDIA=1");
-                
-                else if (LocalSystem.isWindows)
-                    return DriveInfo.GetDrives().FirstOrDefault(d => d.Name == Path).IsReady;
-                
-                return false;
+                return LocalSystem.ExecuteCommand($"udevadm info -q property {Path}").Contains("ID_CDROM_MEDIA=1");
             }
         }
 
@@ -101,43 +73,23 @@ namespace RipVanBluRay.Service
         {
             get
             {
-                if (LocalSystem.isLinux)
+                switch (LocalSystem.ExecuteCommand($"udevadm info -q property {Path}"))
                 {
-                    switch (LocalSystem.ExecuteCommand($"udevadm info -q property {Path}"))
-                    {
-                        case string a when a.Contains("ID_CDROM_MEDIA_CD=1") && a.Contains("ID_CDROM_MEDIA_TRACK_COUNT_AUDIO"):
-                            return MediaType.Audio;
-                        case string a when a.Contains("ID_CDROM_MEDIA_BD=1"):
-                            return MediaType.BluRay;
-                        case string a when a.Contains("ID_CDROM_MEDIA_DVD=1"):
-                            return MediaType.DVD;
-                        default:
-                            return MediaType.None;
-                    }
+                    case string a when a.Contains("ID_CDROM_MEDIA_CD=1") && a.Contains("ID_CDROM_MEDIA_TRACK_COUNT_AUDIO"):
+                        return MediaType.Audio;
+                    case string a when a.Contains("ID_CDROM_MEDIA_BD=1"):
+                        return MediaType.BluRay;
+                    case string a when a.Contains("ID_CDROM_MEDIA_DVD=1"):
+                        return MediaType.DVD;
+                    default:
+                        return MediaType.None;
                 }
-
-                else if (LocalSystem.isWindows)
-                {
-                    return MediaType.None;
-                }
-
-                else
-                    return MediaType.None;
             }
         }
 
         public void Eject()
         {
-            if (LocalSystem.isWindows)
-            {
-                Windows.mciSendStringA($"open {Id} type CDaudio alias drive{DriveLetter}", null, 0, 0);
-                Windows.mciSendStringA($"set drive{DriveLetter} door open", null, 0, 0);
-            }
-
-            else if (LocalSystem.isLinux)
-            {
-                LocalSystem.ExecuteCommand($"eject {Path}");
-            }
+            LocalSystem.ExecuteCommand($"eject {Path}");
         }
     }
 

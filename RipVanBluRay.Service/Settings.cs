@@ -41,8 +41,13 @@ namespace RipVanBluRay.Service
 
             Directory.CreateDirectory(DefaultDirectory);
 
-            MakeMKVPath = !string.IsNullOrEmpty(ConfigFile.GetSection("MakeMKV")["Path"]) ? ConfigFile.GetSection("MakeMKV")["Path"] : LocalSystem.ExecuteCommand($"{(LocalSystem.isWindows ? "where" : "which")} makemkvcon").Trim();
-            AbcdePath = !string.IsNullOrEmpty(ConfigFile.GetSection("ABCDE")["Path"]) ? ConfigFile.GetSection("ABCDE")["Path"] : LocalSystem.ExecuteCommand($"{(LocalSystem.isWindows ? "where" : "which")} abcde").Trim();
+            MakeMKVPath = !string.IsNullOrEmpty(ConfigFile.GetSection("MakeMKV")["Path"])
+                ? ConfigFile.GetSection("MakeMKV")["Path"]
+                : LocalSystem.ExecuteCommand("which makemkvcon").Trim();
+            
+            AbcdePath = !string.IsNullOrEmpty(ConfigFile.GetSection("ABCDE")["Path"])
+                ? ConfigFile.GetSection("ABCDE")["Path"]
+                : LocalSystem.ExecuteCommand("which abcde").Trim();
 
             if (!string.IsNullOrEmpty(ConfigFile["TempDirectory"]))
             {

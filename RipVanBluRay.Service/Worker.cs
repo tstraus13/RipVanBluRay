@@ -29,6 +29,12 @@ namespace RipVanBluRay.Service
         {
             _logger.LogInformation("Timed Hosted Service running.");
 
+            if (string.IsNullOrEmpty(Settings.MakeMKVPath))
+                _logger.LogInformation($"{DateTime.Now} - makemkvcon executable was not found! Will not Rip any DVDs, BluRays, or UHD Discs");
+
+            if (string.IsNullOrEmpty(Settings.AbcdePath))
+                _logger.LogInformation($"{DateTime.Now} - abcde executable was not found! Will not Rip any Music CDs");
+
             _timer = new Timer(CheckDiscDrives, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;
@@ -45,26 +51,10 @@ namespace RipVanBluRay.Service
 
         private void DetectDiscDrives()
         {
-            if (LocalSystem.isWindows)
-            {
-                var drives = DriveInfo.GetDrives();
+            var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
 
-                foreach (var drive in drives)
-                {
-                    if (drive.DriveType == DriveType.CDRom)
-                    {
-                        DiscDrives.Add(new DiscDrive(new string(drive.Name.Take(2).ToArray())));
-                    }
-                }
-            }
-
-            else if (LocalSystem.isLinux)
-            {
-                var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
-
-                foreach (var dev in json.blockdevices)
-                    DiscDrives.Add(new DiscDrive(dev.name));
-            }
+            foreach (var dev in json.blockdevices)
+                DiscDrives.Add(new DiscDrive(dev.name));
         }
 
         private void CheckDiscDrives(object state)
@@ -78,13 +68,16 @@ namespace RipVanBluRay.Service
                         switch (drive.DiscMedia)
                         {
                             case MediaType.Audio:
-                                drive.RipProcess = RipMusic(drive);;
+                                if (!string.IsNullOrEmpty(Settings.AbcdePath))
+                                    drive.RipProcess = RipMusic(drive);;
                                 break;
                             case MediaType.BluRay:
-                                drive.RipProcess = RipMovie(drive);
+                                if (!string.IsNullOrEmpty(Settings.MakeMKVPath))
+                                    drive.RipProcess = RipMovie(drive);
                                 break;
                             case MediaType.DVD:
-                                drive.RipProcess = RipMovie(drive);
+                                if (!string.IsNullOrEmpty(Settings.MakeMKVPath))
+                                    drive.RipProcess = RipMovie(drive);
                                 break;
                             case MediaType.None:
                                 break;
