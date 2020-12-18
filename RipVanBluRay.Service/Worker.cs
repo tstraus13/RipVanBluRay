@@ -96,7 +96,7 @@ namespace RipVanBluRay.Service
 
                 else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("makemkvcon"))
                 {
-                    _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Ejecting Disc...");
+                    _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Exit code was {drive.RipProcess.ExitCode}. Ejecting Disc...");
 
                     drive.Eject();
                     drive.RipProcess = null;

@@ -13,8 +13,12 @@ namespace RipVanBluRay.Service
         public static string TempDirectory { get; private set; }
         public static string CompletedDirectory { get; private set; }
         public static string LogsDirectory {get; private set; }
+
+        public static string MakeMKVPath {get; private set; }
         public static string MinimumLength { get; private set; }
-        public static string FileType {get; private set;}
+
+        public static string AbcdePath { get; private set; }
+        public static string FileType { get; private set; }
         public static string EncoderJobs { get; private set; }
 
         private static IConfigurationRoot ConfigFile { get; set; }
@@ -36,6 +40,9 @@ namespace RipVanBluRay.Service
             ConfigFile = builder.Build();
 
             Directory.CreateDirectory(DefaultDirectory);
+
+            MakeMKVPath = !string.IsNullOrEmpty(ConfigFile.GetSection("MakeMKV")["Path"]) ? ConfigFile.GetSection("MakeMKV")["Path"] : LocalSystem.ExecuteCommand($"{(LocalSystem.isWindows ? "where" : "which")} makemkvcon").Trim();
+            AbcdePath = !string.IsNullOrEmpty(ConfigFile.GetSection("ABCDE")["Path"]) ? ConfigFile.GetSection("ABCDE")["Path"] : LocalSystem.ExecuteCommand($"{(LocalSystem.isWindows ? "where" : "which")} abcde").Trim();
 
             if (!string.IsNullOrEmpty(ConfigFile["TempDirectory"]))
             {
@@ -77,6 +84,39 @@ namespace RipVanBluRay.Service
                 LogsDirectory = Path.Combine(DefaultDirectory, "logs");
 
                 Directory.CreateDirectory(LogsDirectory);
+            }
+
+            if (!string.IsNullOrEmpty(ConfigFile.GetSection("MakeMKV")["Key"]))
+            {
+                var key = ConfigFile.GetSection("MakeMKV")["Key"];
+                var makeMkvSettingsFilePath = Path.Combine(LocalSystem.UserDirectory, ".MakeMKV", "settings.conf");
+
+                if (File.Exists(makeMkvSettingsFilePath))
+                {
+                    var makeMkvSettingsFileContent = new List<string>(File.ReadAllLines(makeMkvSettingsFilePath));
+                    
+                    if (makeMkvSettingsFileContent.Exists(l => l.Contains("app_Key")))
+                    {
+                        if (!makeMkvSettingsFileContent.Exists(l => l.Contains(key)))
+                        {
+                            makeMkvSettingsFileContent.RemoveAll(l => l.Contains("app_Key"));
+                            makeMkvSettingsFileContent = makeMkvSettingsFileContent.Append($@"app_Key = ""{key}""").ToList();
+                            File.WriteAllLines(makeMkvSettingsFilePath, makeMkvSettingsFileContent);
+                        }
+                    }
+
+                    else
+                    {
+                        makeMkvSettingsFileContent = makeMkvSettingsFileContent.Append($@"app_Key = ""{key}""").ToList();
+                        File.WriteAllLines(makeMkvSettingsFilePath, makeMkvSettingsFileContent);
+                    }
+                }
+            }
+
+            else
+            {
+                // Could try to retrieve beta key here but I think would prefer for the user to manually do this
+                // so the creator of MakeMKV would get more purchases
             }
 
             if (!string.IsNullOrEmpty(ConfigFile.GetSection("MakeMKV")["MinimumLength"]))
