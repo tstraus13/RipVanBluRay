@@ -94,7 +94,7 @@ namespace RipVanBluRay.Service
                     }
                 }
 
-                else if (drive.RipProcess.HasExited)
+                else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("makemkvcon"))
                 {
                     _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Ejecting Disc...");
 
@@ -108,6 +108,14 @@ namespace RipVanBluRay.Service
                         File.Move(file, Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.mkv"));
                     }
                 }
+
+                else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("abcde"))
+                {
+                    _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Ejecting Disc...");
+
+                    drive.Eject();
+                    drive.RipProcess = null;
+                }
             }
         }
 
@@ -115,7 +123,7 @@ namespace RipVanBluRay.Service
         {
             _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
 
-            var logFileName = $"log_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
+            var logFileName = $"log_makemkv_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
 
             Directory.CreateDirectory(drive.TempDirectoryPath);
             Directory.CreateDirectory(drive.LogDirectoryPath);
@@ -125,7 +133,21 @@ namespace RipVanBluRay.Service
 
         private Process RipMusic(DiscDrive drive)
         {
-            return null;
+            // abcde -d /dev/sr1 -o flac -j 4 -N -D 2>logfile
+            _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
+
+            var logFileName = $"log_abcde_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
+
+            Directory.CreateDirectory(drive.TempDirectoryPath);
+            Directory.CreateDirectory(drive.LogDirectoryPath);
+
+            Dictionary<string,string> env = new Dictionary<string, string>()
+            {
+                { "OUTPUTDIR", Settings.CompletedDirectory},
+                { "WAVOUTPUTDIR", drive.TempDirectoryPath}
+            };
+
+            return LocalSystem.ExecuteBackgroundCommand($@"abcde -d {drive.Path} -o {Settings.FileType} -j {Settings.EncoderJobs} -N -D 2>""{Path.Combine(drive.LogDirectoryPath, logFileName)}""", null, env);
         }
 
         public void Dispose()

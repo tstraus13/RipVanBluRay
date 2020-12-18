@@ -52,7 +52,7 @@ namespace RipVanBluRay.Service
         /// 
         /// </summary>
         /// <param name="command"></param>
-        public static string ExecuteCommand(string command, bool debug = false)
+        public static string ExecuteCommand(string command, string workingDir = null, bool debug = false)
         {
             if (isWindows)
             {
@@ -61,7 +61,8 @@ namespace RipVanBluRay.Service
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
                 };
                 var process = Process.Start(processInfo);
 
@@ -83,7 +84,8 @@ namespace RipVanBluRay.Service
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
                 };
                 var process = Process.Start(processInfo);
 
@@ -110,7 +112,7 @@ namespace RipVanBluRay.Service
             }*/
         }
 
-        public static Process ExecuteBackgroundCommand(string command, bool debug = false)
+        public static Process ExecuteBackgroundCommand(string command, string workingDir = null, Dictionary<string, string> env = null, bool debug = false)
         {
             if (isWindows)
             {
@@ -119,8 +121,13 @@ namespace RipVanBluRay.Service
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
                 };
+                
+                foreach (var var in env)
+                    processInfo.Environment.Add(var.Key, var.Value);
+
                 var process = Process.Start(processInfo);
 
                 return process;
@@ -133,11 +140,14 @@ namespace RipVanBluRay.Service
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
                 };
-                var process = new Process();
-                process.EnableRaisingEvents = true;
-                process = Process.Start(processInfo);
+                
+                foreach (var var in env)
+                    processInfo.Environment.Add(var.Key, var.Value);
+
+                var process = Process.Start(processInfo);
 
                 return process;
             }

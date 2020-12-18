@@ -14,6 +14,8 @@ namespace RipVanBluRay.Service
         public static string CompletedDirectory { get; private set; }
         public static string LogsDirectory {get; private set; }
         public static string MinimumLength { get; private set; }
+        public static string FileType {get; private set;}
+        public static string EncoderJobs { get; private set; }
 
         private static IConfigurationRoot ConfigFile { get; set; }
 
@@ -81,6 +83,16 @@ namespace RipVanBluRay.Service
                 MinimumLength = ConfigFile.GetSection("MakeMKV")["MinimumLength"];
             else
                 MinimumLength = "3600";
+
+            if (!string.IsNullOrEmpty(ConfigFile.GetSection("ABCDE")["FileType"]))
+                FileType = ConfigFile.GetSection("ABCDE")["FileType"];
+            else
+                FileType = "flac";
+
+            if (!string.IsNullOrEmpty(ConfigFile.GetSection("ABCDE")["EncoderJobs"]))
+                EncoderJobs = ConfigFile.GetSection("ABCDE")["EncoderJobs"];
+            else
+                EncoderJobs = "2";
         }
     }
 }
