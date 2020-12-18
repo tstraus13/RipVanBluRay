@@ -12,6 +12,28 @@ namespace RipVanBluRay.Service
         public string Id { get; set; }
 
         public Process RipProcess {get; set;}
+
+        public string TempDirectoryPath
+        {
+            get
+            {
+                if (LocalSystem.isWindows)
+                    return System.IO.Path.Combine(Settings.TempDirectory, DriveLetter);
+                else
+                    return System.IO.Path.Combine(Settings.TempDirectory, Id);
+            }
+        }
+
+        public string LogDirectoryPath
+        {
+            get
+            {
+                if (LocalSystem.isWindows)
+                    return System.IO.Path.Combine(Settings.LogsDirectory, DriveLetter);
+                else
+                    return System.IO.Path.Combine(Settings.LogsDirectory, Id);
+            }
+        }
         
         public DiscDrive()
         {

@@ -12,6 +12,7 @@ namespace RipVanBluRay.Service
     {
         public static string TempDirectory { get; private set; }
         public static string CompletedDirectory { get; private set; }
+        public static string LogsDirectory {get; private set; }
         public static string MinimumLength { get; private set; }
 
         private static IConfigurationRoot ConfigFile { get; set; }
@@ -60,6 +61,20 @@ namespace RipVanBluRay.Service
                 CompletedDirectory = Path.Combine(DefaultDirectory, "completed");
 
                 Directory.CreateDirectory(CompletedDirectory);
+            }
+
+            if (!string.IsNullOrEmpty(ConfigFile["LogsDirectory"]))
+            {
+                LogsDirectory = ConfigFile["LogsDirectory"];
+
+                Directory.CreateDirectory(LogsDirectory);
+            }
+
+            else
+            {
+                LogsDirectory = Path.Combine(DefaultDirectory, "logs");
+
+                Directory.CreateDirectory(LogsDirectory);
             }
 
             if (!string.IsNullOrEmpty(ConfigFile.GetSection("MakeMKV")["MinimumLength"]))

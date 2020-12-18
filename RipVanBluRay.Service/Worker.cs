@@ -100,6 +100,13 @@ namespace RipVanBluRay.Service
 
                     drive.Eject();
                     drive.RipProcess = null;
+
+                    var files = Directory.GetFiles(drive.TempDirectoryPath, "*.mkv");
+
+                    foreach (var file in files)
+                    {
+                        File.Move(file, Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.mkv"));
+                    }
                 }
             }
         }
@@ -108,10 +115,12 @@ namespace RipVanBluRay.Service
         {
             _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
 
-            if (LocalSystem.isWindows)
-                return LocalSystem.ExecuteBackgroundCommand($@"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} {Path.Combine(Settings.TempDirectory, drive.DriveLetter)}");
-            else
-                return LocalSystem.ExecuteBackgroundCommand($@"makemkvcon --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} {Path.Combine(Settings.TempDirectory, drive.Id)}");
+            var logFileName = $"log_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
+
+            Directory.CreateDirectory(drive.TempDirectoryPath);
+            Directory.CreateDirectory(drive.LogDirectoryPath);
+
+            return LocalSystem.ExecuteBackgroundCommand($@"makemkvcon --messages=""{Path.Combine(drive.LogDirectoryPath, logFileName)}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
         }
 
         private Process RipMusic(DiscDrive drive)
