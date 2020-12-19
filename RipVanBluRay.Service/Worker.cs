@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Diagnostics;
 
 namespace RipVanBluRay.Service
