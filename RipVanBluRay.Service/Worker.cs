@@ -88,7 +88,10 @@ namespace RipVanBluRay.Service
 
                 else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("makemkvcon"))
                 {
-                    _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Exit code was {drive.RipProcess.ExitCode}. Ejecting Disc...");
+                    _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Ejecting Disc...");
+
+                    if (drive.RipProcess.ExitCode != 0)
+                        _logger.LogWarning($"{DateTime.Now} - The Rip for {drive.Id} has exited with an abnormal code!");
 
                     drive.Eject();
                     drive.RipProcess = null;
@@ -104,6 +107,9 @@ namespace RipVanBluRay.Service
                 else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("abcde"))
                 {
                     _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Ejecting Disc...");
+                    
+                    if (drive.RipProcess.ExitCode != 0)
+                        _logger.LogWarning($"{DateTime.Now} - The Rip for {drive.Id} has exited with an abnormal code!");
 
                     drive.Eject();
                     drive.RipProcess = null;
@@ -116,11 +122,12 @@ namespace RipVanBluRay.Service
             _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
 
             var logFileName = $"log_makemkv_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
+            var logFilePath = Path.Combine(drive.LogDirectoryPath, logFileName);
 
             Directory.CreateDirectory(drive.TempDirectoryPath);
             Directory.CreateDirectory(drive.LogDirectoryPath);
 
-            return LocalSystem.ExecuteBackgroundCommand($@"makemkvcon --messages=""{Path.Combine(drive.LogDirectoryPath, logFileName)}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
+            return LocalSystem.ExecuteBackgroundCommand($@"{Settings.MakeMKVPath} --messages=""{logFilePath}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
         }
 
         private Process RipMusic(DiscDrive drive)
@@ -129,6 +136,7 @@ namespace RipVanBluRay.Service
             _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
 
             var logFileName = $"log_abcde_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
+            var logFilePath = Path.Combine(drive.LogDirectoryPath, logFileName);
 
             Directory.CreateDirectory(drive.TempDirectoryPath);
             Directory.CreateDirectory(drive.LogDirectoryPath);
@@ -139,7 +147,7 @@ namespace RipVanBluRay.Service
                 { "WAVOUTPUTDIR", drive.TempDirectoryPath}
             };
 
-            return LocalSystem.ExecuteBackgroundCommand($@"abcde -d {drive.Path} -o {Settings.FileType} -j {Settings.EncoderJobs} -N -D 2>""{Path.Combine(drive.LogDirectoryPath, logFileName)}""", null, env);
+            return LocalSystem.ExecuteBackgroundCommand($@"{Settings.AbcdePath} -d {drive.Path} -o {Settings.FileType} -j {Settings.EncoderJobs} -N -D 2>""{logFilePath}""", null, env);
         }
 
         public void Dispose()

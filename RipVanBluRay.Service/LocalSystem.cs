@@ -18,7 +18,7 @@ namespace RipVanBluRay.Service
         /// 
         /// </summary>
         /// <param name="command"></param>
-        public static string ExecuteCommand(string command, string workingDir = null, bool debug = false)
+        public static string ExecuteCommand(string command, string workingDir = null, Dictionary<string, string> env = null, bool debug = false)
         {
             var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{command}\"")
             {
@@ -28,6 +28,11 @@ namespace RipVanBluRay.Service
                 RedirectStandardOutput = true,
                 WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
             };
+
+            if (env != null)    
+                foreach (var var in env)
+                    processInfo.Environment.Add(var.Key, var.Value);
+
             var process = Process.Start(processInfo);
 
             string output = process.StandardOutput.ReadToEnd();
@@ -52,9 +57,10 @@ namespace RipVanBluRay.Service
                 RedirectStandardOutput = true,
                 WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
             };
-                
-            foreach (var var in env)
-                processInfo.Environment.Add(var.Key, var.Value);
+
+            if (env != null)    
+                foreach (var var in env)
+                    processInfo.Environment.Add(var.Key, var.Value);
 
             var process = Process.Start(processInfo);
 
