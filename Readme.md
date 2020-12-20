@@ -2,7 +2,7 @@
 
 ## Overview
 
-Rip Van BluRay is a service that runs on a Computer with 1 or Many Optical Disk Drives. When running, when a Disc is inserted into one of the drives it will identify the type of Disc (Music CD, DVD, BluRay) and begin to rip it. Afterwards it will eject the Disc and will be ready to rip again.
+Rip Van BluRay is a service that runs on a Computer with One or Many Optical Disk Drives. When running, when a Disc is inserted into one of the drives it will identify the type of Disc (Music CD, DVD, BluRay) and begin to rip it. Afterwards it will eject the Disc and will be ready to rip again.
 
 ## Dependencies
 
