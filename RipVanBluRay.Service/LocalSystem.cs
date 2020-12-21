@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace RipVanBluRay.Service
+namespace RipVanBluRay
 {
     public static class LocalSystem
     {

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RipVanBluRay.Service", "RipVanBluRay.Service\RipVanBluRay.Service.csproj", "{5E2D3E1D-B8DC-4DCC-AFAE-4F38698858EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RipVanBluRay", "RipVanBluRay.Service\RipVanBluRay.csproj", "{5E2D3E1D-B8DC-4DCC-AFAE-4F38698858EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

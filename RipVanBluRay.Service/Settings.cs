@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace RipVanBluRay.Service
+namespace RipVanBluRay
 {
     public static class Settings
     {

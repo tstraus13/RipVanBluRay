@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace RipVanBluRay.Service
+namespace RipVanBluRay
 {
     public class DiscDrive
     {

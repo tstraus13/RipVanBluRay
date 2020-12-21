@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
 
-namespace RipVanBluRay.Service
+namespace RipVanBluRay
 {
     public class Worker : IHostedService, IDisposable
     {

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace RipVanBluRay.Service
+namespace RipVanBluRay
 {
     public class Program
     {
