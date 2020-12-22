@@ -4,8 +4,11 @@ Description=Rip Van BluRay
 
 [Service]
 Type=notify
+# Specify the user and group to run as
+User=
+Group=
 # Specify the location where you installed the exectable
-ExecStart=/usr/local/bin/ripvanbluray
+ExecStart=/usr/local/bin/rvbr
 
 [Install]
 WantedBy=multi-user.target
