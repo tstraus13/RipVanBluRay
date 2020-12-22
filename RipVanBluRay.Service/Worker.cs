@@ -100,7 +100,7 @@ namespace RipVanBluRay
 
                     foreach (var file in files)
                     {
-                        File.Move(file, Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.mkv"));
+                        File.Move(file, Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{DateTime.Now.ToString("yyyyMMdd_HHmmss_fffffff")}.mkv"));
                     }
                 }
 
