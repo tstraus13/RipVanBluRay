@@ -22,8 +22,8 @@ Rip Van BluRay is a service that runs on a Computer with One or Many Optical Dis
 
 ## Installation
 
-TO BE ADDED
+I have included a SystemD unit file in this repository. You may customize to your liking but the one included should get to you started. Once configured to start with the system, it will begin when the system is booted. I do recommend, before running it as a service, to first do a manual rip of a DVD, BluRay, or UHD Disc and a Music CD to ensure MakeMKV and ABCDE are working properly. **DO NOT COME TO ME FOR SUPPORT ON MAKEMKV OR ABCDE. I CANNOT HELP.**
 
 ## Configuration
 
-TO BE ADDED
+In the repository there is a file named settings.json. It has all the settings that you can change/manipulate. I will try to include a settings file will all available settings listed. More will likely be added as time goes on. This settings file should be located in the Rip Van BluRay default directory ($HOME/.RipVanBluRay) which is created on first launch. If no file is found it will use the defaults.

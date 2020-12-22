@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/RipVanBluRay.Service/bin/Debug/net5.0/RipVanBluRay.Service.dll",
+            "program": "${workspaceFolder}/RipVanBluRay.Service/bin/Debug/net5.0/RipVanBluRay.dll",
             "args": [],
             "cwd": "${workspaceFolder}/RipVanBluRay.Service",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

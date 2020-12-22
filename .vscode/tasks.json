@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/RipVanBluRay.Service/RipVanBluRay.Service.csproj",
+                "${workspaceFolder}/RipVanBluRay.Service/RipVanBluRay.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/RipVanBluRay.Service/RipVanBluRay.Service.csproj",
+                "${workspaceFolder}/RipVanBluRay.Service/RipVanBluRay.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,7 +32,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/RipVanBluRay.Service/RipVanBluRay.Service.csproj",
+                "${workspaceFolder}/RipVanBluRay.Service/RipVanBluRay.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
