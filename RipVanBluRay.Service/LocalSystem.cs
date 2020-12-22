@@ -20,7 +20,7 @@ namespace RipVanBluRay
         /// <param name="command"></param>
         public static string ExecuteCommand(string command, string workingDir = null, Dictionary<string, string> env = null, bool debug = false)
         {
-            var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{command}\"")
+            var processInfo = new ProcessStartInfo("/bin/bash", $"-c '{command}'")
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
@@ -49,7 +49,7 @@ namespace RipVanBluRay
         public static Process ExecuteBackgroundCommand(string command, string workingDir = null, Dictionary<string, string> env = null, bool debug = false)
         {
 
-            var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{command}\"")
+            var processInfo = new ProcessStartInfo("/bin/bash", $"-c '{command}'")
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
