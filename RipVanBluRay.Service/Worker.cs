@@ -26,13 +26,13 @@ namespace RipVanBluRay
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Timed Hosted Service running.");
+            _logger.LogInformation("Rip Van BluRay Service running.");
 
             if (string.IsNullOrEmpty(Settings.MakeMKVPath))
-                _logger.LogInformation($"{DateTime.Now} - makemkvcon executable was not found! Will not Rip any DVDs, BluRays, or UHD Discs");
+                _logger.LogInformation($"makemkvcon executable was not found! Will not Rip any DVDs, BluRays, or UHD Discs");
 
             if (string.IsNullOrEmpty(Settings.AbcdePath))
-                _logger.LogInformation($"{DateTime.Now} - abcde executable was not found! Will not Rip any Music CDs");
+                _logger.LogInformation($"abcde executable was not found! Will not Rip any Music CDs");
 
             _timer = new Timer(CheckDiscDrives, null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
 
@@ -41,7 +41,7 @@ namespace RipVanBluRay
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Timed Hosted Service is stopping.");
+            _logger.LogInformation("Rip Van BluRay is stopping.");
 
             _timer?.Change(Timeout.Infinite, 0);
 
@@ -88,10 +88,10 @@ namespace RipVanBluRay
 
                 else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("makemkvcon"))
                 {
-                    _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Ejecting Disc...");
+                    _logger.LogInformation($"Drive {drive.Id} has finished ripping. Ejecting Disc...");
 
                     if (drive.RipProcess.ExitCode != 0)
-                        _logger.LogWarning($"{DateTime.Now} - The Rip for {drive.Id} has exited with an abnormal code!");
+                        _logger.LogWarning($"The Rip for {drive.Id} has exited with an abnormal code!");
 
                     
                     drive.RipProcess = null;
@@ -108,10 +108,10 @@ namespace RipVanBluRay
 
                 else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("abcde"))
                 {
-                    _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} has finished ripping. Ejecting Disc...");
+                    _logger.LogInformation($"Drive {drive.Id} has finished ripping. Ejecting Disc...");
                     
                     if (drive.RipProcess.ExitCode != 0)
-                        _logger.LogWarning($"{DateTime.Now} - The Rip for {drive.Id} has exited with an abnormal code!");
+                        _logger.LogWarning($"The Rip for {drive.Id} has exited with an abnormal code!");
 
                     drive.RipProcess = null;
                     drive.Eject();
@@ -121,7 +121,7 @@ namespace RipVanBluRay
 
         private Process RipMovie(DiscDrive drive)
         {
-            _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
+            _logger.LogInformation($"Drive {drive.Id} is has begun ripping");
 
             var logFileName = $"log_makemkv_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
             var logFilePath = Path.Combine(drive.LogDirectoryPath, logFileName);
@@ -135,7 +135,7 @@ namespace RipVanBluRay
         private Process RipMusic(DiscDrive drive)
         {
             // abcde -d /dev/sr1 -o flac -j 4 -N -D 2>logfile
-            _logger.LogInformation($"{DateTime.Now} - Drive {drive.Id} is has begun ripping");
+            _logger.LogInformation($"Drive {drive.Id} is has begun ripping");
 
             var logFileName = $"log_abcde_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
             var logFilePath = Path.Combine(drive.LogDirectoryPath, logFileName);
