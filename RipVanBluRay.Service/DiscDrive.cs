@@ -84,7 +84,7 @@ namespace RipVanBluRay
 
         public void Eject()
         {
-            LocalSystem.ExecuteCommand($"eject {Path}");
+            LocalSystem.ExecuteBackgroundCommand($"eject {Path}");
         }
     }
 

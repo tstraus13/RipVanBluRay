@@ -34,7 +34,7 @@ namespace RipVanBluRay
             if (string.IsNullOrEmpty(Settings.AbcdePath))
                 _logger.LogInformation($"{DateTime.Now} - abcde executable was not found! Will not Rip any Music CDs");
 
-            _timer = new Timer(CheckDiscDrives, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
+            _timer = new Timer(CheckDiscDrives, null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
 
             return Task.CompletedTask;
         }
@@ -93,14 +93,16 @@ namespace RipVanBluRay
                     if (drive.RipProcess.ExitCode != 0)
                         _logger.LogWarning($"{DateTime.Now} - The Rip for {drive.Id} has exited with an abnormal code!");
 
-                    drive.Eject();
+                    
                     drive.RipProcess = null;
+                    drive.Eject();
 
                     var files = Directory.GetFiles(drive.TempDirectoryPath, "*.mkv");
 
                     foreach (var file in files)
                     {
-                        File.Move(file, Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{DateTime.Now.ToString("yyyyMMdd_HHmmss_fffffff")}.mkv"));
+                        //File.Move(file, Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{DateTime.Now.ToString("yyyyMMdd_HHmmss_fffffff")}.mkv"));
+                        LocalSystem.ExecuteBackgroundCommand($@"mv {file} {Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{DateTime.Now.ToString("yyyyMMdd_HHmmss_fffffff")}.mkv")}");
                     }
                 }
 
@@ -111,8 +113,8 @@ namespace RipVanBluRay
                     if (drive.RipProcess.ExitCode != 0)
                         _logger.LogWarning($"{DateTime.Now} - The Rip for {drive.Id} has exited with an abnormal code!");
 
-                    drive.Eject();
                     drive.RipProcess = null;
+                    drive.Eject();
                 }
             }
         }
