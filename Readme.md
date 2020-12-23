@@ -27,3 +27,11 @@ I have included a SystemD unit file in this repository. You may customize to you
 ## Configuration
 
 In the repository there is a file named settings.json. It has all the settings that you can change/manipulate. I will try to include a settings file will all available settings listed. More will likely be added as time goes on. This settings file should be located in the Rip Van BluRay default directory ($HOME/.RipVanBluRay) which is created on first launch. If no file is found it will use the defaults.
+
+## Building
+
+This application is written in .Net 5 as a Hosted Service. You can build an executable yourself. When inside the root directory of the solution run the follow:
+
+```dotnet publish -r linux-x64 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true```
+
+This will build a single executable for simplicity. You can build/publish as you please if you want to do something different.
