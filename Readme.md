@@ -4,6 +4,8 @@
 
 Rip Van BluRay is a service that runs on a Computer with One or Many Optical Disk Drives. When running, when a Disc is inserted into one of the drives it will identify the type of Disc (Music CD, DVD, BluRay) and begin to rip it. Afterwards it will eject the Disc and will be ready to rip again.
 
+**Currently Automated Ripping of TV Shows is not supported because of no reliable ways of determining whether a DVD/BluRay is a Movie or TV Show/Series. If I someday find a way to do it, I will implement it.**
+
 ## Dependencies
 
 1. **Linux** - I wrote this using Ubuntu as the main distrobution but in theory any Linux Distribution could work.
