@@ -18,6 +18,10 @@ namespace RipVanBluRay
         /// 
         /// </summary>
         /// <param name="command"></param>
+        /// <param name="workingDir"></param>
+        /// <param name="env"></param>
+        /// <param name="debug"></param>
+        /// <returns></returns>
         public static string ExecuteCommand(string command, string workingDir = null, Dictionary<string, string> env = null, bool debug = false)
         {
             var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{command.Replace("\"", "\\\"")}\"")
@@ -48,6 +52,14 @@ namespace RipVanBluRay
                 return error;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="workingDir"></param>
+        /// <param name="env"></param>
+        /// <param name="debug"></param>
+        /// <returns></returns>
         public static Process ExecuteBackgroundCommand(string command, string workingDir = null, Dictionary<string, string> env = null, bool debug = false)
         {
 

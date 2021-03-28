@@ -11,6 +11,15 @@ namespace RipVanBluRay
         public static string TempDirectory { get; private set; }
         public static string CompletedDirectory { get; private set; }
         public static string LogsDirectory {get; private set; }
+        public static bool IsMakeMKVAvailable 
+        { 
+            get { return !string.IsNullOrEmpty(MakeMKVPath); }
+        }
+
+        public static bool IsAbcdeAvailable
+        {
+            get { return !string.IsNullOrEmpty(AbcdePath); }
+        }
 
         public static string MakeMKVPath {get; private set; }
         public static string MinimumLength { get; private set; }

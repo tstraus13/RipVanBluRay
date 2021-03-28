@@ -28,10 +28,10 @@ namespace RipVanBluRay
         {
             _logger.LogInformation("Rip Van BluRay Service running.");
 
-            if (string.IsNullOrEmpty(Settings.MakeMKVPath))
+            if (!Settings.IsMakeMKVAvailable)
                 _logger.LogInformation($"makemkvcon executable was not found! Will not Rip any DVDs, BluRays, or UHD Discs");
 
-            if (string.IsNullOrEmpty(Settings.AbcdePath))
+            if (!Settings.IsAbcdeAvailable)
                 _logger.LogInformation($"abcde executable was not found! Will not Rip any Music CDs");
 
             _timer = new Timer(CheckDiscDrives, null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
@@ -67,15 +67,15 @@ namespace RipVanBluRay
                         switch (drive.DiscMedia)
                         {
                             case MediaType.Audio:
-                                if (!string.IsNullOrEmpty(Settings.AbcdePath))
+                                if (Settings.IsAbcdeAvailable)
                                     drive.RipProcess = RipMusic(drive);;
                                 break;
                             case MediaType.BluRay:
-                                if (!string.IsNullOrEmpty(Settings.MakeMKVPath))
+                                if (Settings.IsMakeMKVAvailable)
                                     drive.RipProcess = RipMovie(drive);
                                 break;
                             case MediaType.DVD:
-                                if (!string.IsNullOrEmpty(Settings.MakeMKVPath))
+                                if (Settings.IsMakeMKVAvailable)
                                     drive.RipProcess = RipMovie(drive);
                                 break;
                             case MediaType.None:
