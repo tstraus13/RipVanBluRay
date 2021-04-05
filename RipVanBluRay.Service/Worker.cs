@@ -122,7 +122,7 @@ namespace RipVanBluRay
 
         private Process RipMovie(DiscDrive drive)
         {
-            _logger.LogInformation($"Drive {drive.Id} is has begun ripping");
+            _logger.LogInformation($"Drive {drive.Id} has begun ripping");
 
             var logFileName = $"log_makemkv_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
             var logFilePath = Path.Combine(drive.LogDirectoryPath, logFileName);
@@ -136,7 +136,7 @@ namespace RipVanBluRay
         private Process RipMusic(DiscDrive drive)
         {
             // abcde -d /dev/sr1 -o flac -j 4 -N -D 2>logfile
-            _logger.LogInformation($"Drive {drive.Id} is has begun ripping");
+            _logger.LogInformation($"Drive {drive.Id} has begun ripping");
 
             var logFileName = $"log_abcde_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
             var logFilePath = Path.Combine(drive.LogDirectoryPath, logFileName);
