@@ -1,26 +1,30 @@
 {
-    // Default: $HOME/.RipVanBluRay/temp
-    "TempDirectory": "",
-    // Default: $HOME/.RipVanBluRay/completed
-    "CompletedDirectory": "",
-    // Default: $HOME/.RipVanBluRay/logs
-    "LogsDirectory": "",
+  // Default: $HOME/.RipVanBluRay/temp
+  "TempDirectory": "",
+  // Default: $HOME/.RipVanBluRay/completed
+  "CompletedDirectory": "",
+  // Default: $HOME/.RipVanBluRay/logs
+  "LogsDirectory": "",
 
-    "MakeMKV": {
+  "MakeMKV": {
     // Application will attempt to find the location of MakeMKV but if not found, will not Rip any inserted DVD, BluRay, or UHD Disk
     "Path": "",
     // This will apply the given key to the .MakeMKV config file. You can leave blank and apply directly to the .MakeMKV config file, which is probably best. 
-    "Key": "", 
+    "Key": "",
     // Tells MakeMKV the minimum length to use for searching for the main title. Default is 3600 seconds or 60 minutes
-    "MinimumLength": ""
-    },
+    "MinimumLength": "",
+    // How many movies do you want moved to the completed directory at once?
+    // This can be useful depending on where you are copying (local, network, USB, etc.)
+    // Default is 1
+    "ConcurrentMoves": ""
+  },
 
-    "ABCDE": {
+  "ABCDE": {
     // Application will attempt to find the location of abcde but if not found, will not Rip any inserted Music CD
     "Path": "",
     // The type of file to transcode to. Default will convert to flac. You will need install any additional codecs for other formats as well as the default flac.
     "FileType": "",
     // How many encode jobs to run while Ripping. Default is 2
     "EncoderJobs": ""
-    }
+  }
 }

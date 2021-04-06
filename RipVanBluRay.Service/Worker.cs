@@ -18,9 +18,9 @@ namespace RipVanBluRay
         private Timer DiscTimer;
         private Timer MoveTimer;
 
-        private List<DiscDrive> DiscDrives          = new List<DiscDrive>();
+        private List<DiscDrive> DiscDrives = new List<DiscDrive>();
 
-        private Process MoveProcess;
+        private List<Process> MoveProcesses = new List<Process>();
         private ConcurrentQueue<string> FilesToMove = new ConcurrentQueue<string>();
 
         public Worker(ILogger<Worker> ilogger)
@@ -42,7 +42,7 @@ namespace RipVanBluRay
                 Logger.LogInformation($"abcde executable was not found! Will not Rip any Music CDs");
 
             DiscTimer = new Timer(CheckDiscDrives, null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
-            MoveTimer = new Timer(MoveFile, null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
+            MoveTimer = new Timer(MoveFile, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
 
             return Task.CompletedTask;
         }
@@ -172,12 +172,23 @@ namespace RipVanBluRay
 
         private void MoveFile(object state)
         {
-            if ((MoveProcess == null || MoveProcess.HasExited) && !FilesToMove.IsEmpty)
+            if (!FilesToMove.IsEmpty)
             {
-                if (FilesToMove.TryDequeue(out string cmd))
+                MoveProcesses.RemoveAll(m => m.HasExited);
+
+                var nMoves = Settings.ConcurrentMoves - MoveProcesses.Count;
+
+                if (nMoves > 0)
                 {
-                    Logger.LogInformation($"Moving File... {FilesToMove.Count} Files Remaining");
-                    MoveProcess = LocalSystem.ExecuteBackgroundCommand(cmd);
+                    for (int i = 0; i < Math.Min(nMoves, FilesToMove.Count); i++)
+                    {
+                        if (FilesToMove.TryDequeue(out string cmd))
+                        {
+                            MoveProcesses.Add(LocalSystem.ExecuteBackgroundCommand(cmd));
+                        }
+                    }
+
+                    Logger.LogInformation($"Moving File(s)... {FilesToMove.Count} Files Remaining");
                 }
             }
         }
@@ -186,7 +197,6 @@ namespace RipVanBluRay
         {
             DiscTimer?.Dispose();
             MoveTimer?.Dispose();
-            MoveProcess?.Dispose();
         }
     }
 }

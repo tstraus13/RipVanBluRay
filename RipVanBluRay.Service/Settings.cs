@@ -23,6 +23,7 @@ namespace RipVanBluRay
 
         public static string MakeMKVPath {get; private set; }
         public static string MinimumLength { get; private set; }
+        public static int ConcurrentMoves { get; private set; }
 
         public static string AbcdePath { get; private set; }
         public static string FileType { get; private set; }
@@ -135,6 +136,16 @@ namespace RipVanBluRay
                 MinimumLength = ConfigFile.GetSection("MakeMKV")["MinimumLength"];
             else
                 MinimumLength = "3600";
+
+            if (!string.IsNullOrEmpty(ConfigFile.GetSection("MakeMKV")["ConcurrentMoves"]))
+            {
+                if (int.TryParse(ConfigFile.GetSection("MakeMKV")["ConcurrentMoves"], out int cMoves))
+                    ConcurrentMoves = cMoves;
+                else
+                    ConcurrentMoves = 1;
+            }
+            else
+                ConcurrentMoves = 1;
 
             if (!string.IsNullOrEmpty(ConfigFile.GetSection("ABCDE")["FileType"]))
                 FileType = ConfigFile.GetSection("ABCDE")["FileType"];
