@@ -113,11 +113,11 @@ namespace RipVanBluRay
                         // Rename the files in case another rip finishes it
                         // doesn't attempt to move the files again that are
                         // in progress of being moved
-                        var mvName = $"{file}.mv";
+                        var mvName = $"{Path.GetFileNameWithoutExtension(file)}_{Guid.NewGuid().ToString()}.tmp";
                         var rename = $@"mv ""{file}"" ""{mvName}""";
                         LocalSystem.ExecuteCommand(rename);
 
-                        var cmd = $@"mv ""{mvName}"" ""{Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{DateTime.Now.ToString("yyyyMMdd_HHmmss_fffffff")}.mkv")}""";
+                        var cmd = $@"mv ""{mvName}"" ""{Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{Guid.NewGuid().ToString()}.mkv")}""";
                         //LocalSystem.ExecuteBackgroundCommand(cmd);
                         FilesToMove.Enqueue(cmd);
                     }
