@@ -147,7 +147,7 @@ namespace RipVanBluRay
             Directory.CreateDirectory(drive.TempDirectoryPath);
             Directory.CreateDirectory(drive.LogDirectoryPath);
 
-            drive.Label = LocalSystem.ExecuteCommand($"blkid -o value -s LABEL {drive.Path}");
+            drive.Label = LocalSystem.ExecuteCommand($"blkid -o value -s LABEL {drive.Path}").Trim();
 
             return LocalSystem.ExecuteBackgroundCommand($@"{Settings.MakeMKVPath} --messages=""{logFilePath}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
         }
