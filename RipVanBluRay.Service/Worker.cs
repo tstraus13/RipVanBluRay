@@ -113,7 +113,7 @@ namespace RipVanBluRay
                         // Rename the files in case another rip finishes it
                         // doesn't attempt to move the files again that are
                         // in progress of being moved
-                        var mvName = $"{Path.GetFileNameWithoutExtension(file)}_{Guid.NewGuid().ToString()}.tmp";
+                        var mvName = $"{file}.{Guid.NewGuid().ToString()}.tmp";
                         var rename = $@"mv ""{file}"" ""{mvName}""";
                         LocalSystem.ExecuteCommand(rename);
 
