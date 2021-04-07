@@ -6,6 +6,8 @@ namespace RipVanBluRay
     {
         public string Id { get; set; }
 
+        public string Label { get; set; }
+
         public Process RipProcess {get; set;}
 
         public string TempDirectoryPath

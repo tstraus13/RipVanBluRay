@@ -113,11 +113,11 @@ namespace RipVanBluRay
                         // Rename the files in case another rip finishes it
                         // doesn't attempt to move the files again that are
                         // in progress of being moved
-                        var mvName = $"{file}.{Guid.NewGuid().ToString()}.tmp";
+                        var mvName = Path.Combine(drive.TempDirectoryPath, $"{drive.Label}.{Guid.NewGuid().ToString()}.tmp");
                         var rename = $@"mv ""{file}"" ""{mvName}""";
                         LocalSystem.ExecuteCommand(rename);
 
-                        var cmd = $@"mv ""{mvName}"" ""{Path.Combine(Settings.CompletedDirectory, $@"{Path.GetFileNameWithoutExtension(file)}_{Guid.NewGuid().ToString()}.mkv")}""";
+                        var cmd = $@"mv ""{mvName}"" ""{Path.Combine(Settings.CompletedDirectory, $@"{drive.Label}.{Guid.NewGuid().ToString()}.mkv")}""";
                         //LocalSystem.ExecuteBackgroundCommand(cmd);
                         FilesToMove.Enqueue(cmd);
                     }
@@ -146,6 +146,8 @@ namespace RipVanBluRay
 
             Directory.CreateDirectory(drive.TempDirectoryPath);
             Directory.CreateDirectory(drive.LogDirectoryPath);
+
+            drive.Label = LocalSystem.ExecuteCommand($"blkid -o value -s LABEL {drive.Path}");
 
             return LocalSystem.ExecuteBackgroundCommand($@"{Settings.MakeMKVPath} --messages=""{logFilePath}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
         }
