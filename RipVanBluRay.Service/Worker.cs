@@ -14,6 +14,7 @@ namespace RipVanBluRay
     public class Worker : IHostedService, IDisposable
     {
         private readonly ILogger<Worker> Logger;
+        private bool CheckDiscRunning = false;
 
         private Timer DiscTimer;
         private Timer MoveTimer;
@@ -67,6 +68,11 @@ namespace RipVanBluRay
 
         private void CheckDiscDrives(object state)
         {
+            if (CheckDiscRunning)
+                return;
+
+            CheckDiscRunning = true;
+
             foreach (var drive in DiscDrives)
             {
                 if (!drive.InUse)
@@ -135,6 +141,8 @@ namespace RipVanBluRay
                     drive.Eject();
                 }
             }
+
+            CheckDiscRunning = false;
         }
 
         private Process RipMovie(DiscDrive drive)
