@@ -8,25 +8,30 @@ using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using Microsoft.AspNetCore.SignalR;
+using RipVanBluRay.Hubs;
 
 namespace RipVanBluRay
 {
     public class Worker : IHostedService, IDisposable
     {
         private readonly ILogger<Worker> Logger;
+        private readonly IHubContext<Ripping> HubContext;
+
         private bool CheckDiscRunning = false;
 
         private Timer DiscTimer;
         private Timer MoveTimer;
 
-        private List<DiscDrive> DiscDrives = new List<DiscDrive>();
+        public static List<DiscDrive> DiscDrives { get; private set; } = new List<DiscDrive>();
 
         private List<Process> MoveProcesses = new List<Process>();
         private ConcurrentQueue<string> FilesToMove = new ConcurrentQueue<string>();
 
-        public Worker(ILogger<Worker> ilogger)
+        public Worker(ILogger<Worker> ilogger, IHubContext<RipVanBluRay.Hubs.Ripping> ihubContext)
         {
             Logger = ilogger;
+            HubContext = ihubContext;
 
             Settings.Init();
             DetectDiscDrives();
@@ -60,7 +65,12 @@ namespace RipVanBluRay
 
         private void DetectDiscDrives()
         {
-            var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
+            var output = LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME");
+
+            if (string.IsNullOrEmpty(output))
+                return;
+
+            var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(output);
 
             foreach (var dev in json.blockdevices)
                 DiscDrives.Add(new DiscDrive(dev.name));
@@ -157,6 +167,8 @@ namespace RipVanBluRay
 
             drive.Label = LocalSystem.ExecuteCommand($"blkid -o value -s LABEL {drive.Path}").Trim();
 
+            HubContext.Clients.All.SendAsync("ReceiveDiscDriveLabel", drive.Id, drive.Label).Wait();
+
             return LocalSystem.ExecuteBackgroundCommand($@"{Settings.MakeMKVPath} --messages=""{logFilePath}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
         }
 
@@ -176,6 +188,10 @@ namespace RipVanBluRay
                 { "OUTPUTDIR", Settings.CompletedDirectory},
                 { "WAVOUTPUTDIR", drive.TempDirectoryPath}
             };
+
+            drive.Label = "Music";
+
+            HubContext.Clients.All.SendAsync("ReceiveDiscDriveLabel", drive.Id, drive.Label).Wait();
 
             return LocalSystem.ExecuteBackgroundCommand($@"{Settings.AbcdePath} -d {drive.Path} -o {Settings.FileType} -j {Settings.EncoderJobs} -N -D 2>""{logFilePath}""", null, env);
         }

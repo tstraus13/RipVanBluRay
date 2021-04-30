@@ -1,11 +1,18 @@
-﻿{
+{
   "profiles": {
     "RipVanBluRay": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": "true"
+    },
+    "WSL 2": {
+      "commandName": "WSL2",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "distributionName": ""
     }
   }
 }

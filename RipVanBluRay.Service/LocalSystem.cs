@@ -33,7 +33,7 @@ namespace RipVanBluRay
                 WorkingDirectory = !string.IsNullOrEmpty(workingDir) ? workingDir : ""
             };
 
-            if (env != null)    
+            if (env != null)
                 foreach (var var in env)
                     processInfo.Environment.Add(var.Key, var.Value);
 
