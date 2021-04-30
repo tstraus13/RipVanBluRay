@@ -2,6 +2,8 @@ variables:
   FF_ENABLE_BASH_EXIT_CODE_CHECK: "true"
 
 build_job:
+  only:
+    - master
   image: mcr.microsoft.com/dotnet/sdk:5.0
   stage: build
   script:
