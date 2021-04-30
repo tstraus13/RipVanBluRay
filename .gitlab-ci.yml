@@ -1,26 +1,18 @@
+variables:
+  FF_ENABLE_BASH_EXIT_CODE_CHECK: "true"
+
 build_job:
   image: mcr.microsoft.com/dotnet/sdk:5.0
   stage: build
   script:
     - ARTIFACT_PATH="${PWD}/artifacts/"
     - mkdir -pv $ARTIFACT_PATH
-    - ls -lsah
+    - dotnet build -c Release
+    - dotnet publish -r linux-x64 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true
+    - cp RipVanBluRay.Service/bin/Release/net5.0/linux-x64/publish/rvbr $ARTIFACT_PATH
     - ls -lsah $ARTIFACT_PATH
-#  artifacts:
-#    name: "vyos-$VERSION-$ARCHITECTURE-iso"
-#    paths:
-#      - "artifacts/vyos*.iso"
-#    expire_in: 1 week
-
-#release_job:
-#  stage: deploy
-#  image: registry.gitlab.com/gitlab-org/release-cli:latest
-#  rules:
-#    - if: $CI_COMMIT_TAG                  # Run this job when a tag is created manually
-#  script:
-#    - echo 'running release_job'
-#  release:
-#   name: 'RipVanBluRay $CI_COMMIT_TAG'
-#    description: 'Rip Van BluRay Version $CI_COMMIT_TAG'
-#    tag_name: '$CI_COMMIT_TAG'
-#    ref: '$CI_COMMIT_TAG'
+  artifacts:
+    name: "RipVanBluRay Executable"
+    paths:
+      - "artifacts/rvbr"
+    expire_in: 1 week
