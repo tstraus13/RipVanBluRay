@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using RipVanBluRay;
 using System.IO;
 using System.Linq;
+using RipVanLibrary;
+using System.Collections.Generic;
 
 namespace RipVanBluRay.Hubs
 {
@@ -20,19 +22,31 @@ namespace RipVanBluRay.Hubs
             return base.OnDisconnectedAsync(exception);
         }
 
-        public async Task GetDiscDrives()
+        public async Task GetRips()
         {
             var drives = Worker.DiscDrives;
+            List<Rip> rips = new List<Rip>();
 
-            await Clients.Caller.SendAsync("ReceiveDiscDrives", drives.Select(d => d.Id).ToList());
+            foreach (var drive in drives)
+            {
+                rips.Add(new Rip
+                {
+                    DriveId = drive.Id,
+                    DiscLabel = drive.Label,
+                    LogFile = await GetLogFile(drive.Id)
+                });
+            }
+
+            //await Clients.Caller.SendAsync("ReceiveRips", rips);
+            await Clients.Caller.SendAsync("ReceiveRips", new List<Rip>() { new Rip() { DriveId = "sr0", DiscLabel = "TEST" } });
         }
 
-        public async Task GetLogFile(string driveId)
+        private async Task<string[]> GetLogFile(string driveId)
         {
             var drive = Worker.DiscDrives.Where(d => d.Id == driveId).FirstOrDefault();
 
             if (drive == null)
-                return;
+                return null;
 
             var directory = new DirectoryInfo(drive.LogDirectoryPath);
 
@@ -42,7 +56,7 @@ namespace RipVanBluRay.Hubs
 
             var lines = await File.ReadAllLinesAsync(file.FullName);
 
-            await Clients.Caller.SendAsync("ReceiveLogFile", drive, lines);
+            return lines;
         }
 
     }

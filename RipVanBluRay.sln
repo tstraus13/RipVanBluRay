@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RipVanBluRay", "RipVanBluRay.Service\RipVanBluRay.csproj", "{5E2D3E1D-B8DC-4DCC-AFAE-4F38698858EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RipVanMonitor", "RipVanMonitor\RipVanMonitor.csproj", "{D1B12E3F-D79C-4834-9289-892D8A2635D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RipVanMonitor", "RipVanMonitor\RipVanMonitor.csproj", "{D1B12E3F-D79C-4834-9289-892D8A2635D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RipVanLibrary", "RipVanLibrary\RipVanLibrary.csproj", "{9559A815-770C-442B-8489-6CAF5406A3B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D1B12E3F-D79C-4834-9289-892D8A2635D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1B12E3F-D79C-4834-9289-892D8A2635D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1B12E3F-D79C-4834-9289-892D8A2635D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9559A815-770C-442B-8489-6CAF5406A3B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9559A815-770C-442B-8489-6CAF5406A3B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9559A815-770C-442B-8489-6CAF5406A3B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9559A815-770C-442B-8489-6CAF5406A3B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
