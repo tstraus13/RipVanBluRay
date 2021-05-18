@@ -60,7 +60,12 @@ namespace RipVanBluRay
 
         private void DetectDiscDrives()
         {
-            var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
+            var output = LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME");
+
+            if (string.IsNullOrEmpty(output))
+                return;
+
+            var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(output);
 
             foreach (var dev in json.blockdevices)
                 DiscDrives.Add(new DiscDrive(dev.name));
