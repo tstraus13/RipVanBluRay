@@ -12,18 +12,20 @@ namespace RipVanBluRay.Controllers
     [Route("[controller]")]
     public class RipController : ControllerBase
     {
-        [HttpGet(Name="DiscDrives")]
+        [HttpGet]
+        [Route("DiscDrives")]
         public IEnumerable<string> DiscDrives()
         {
             return Worker.DiscDrives.Select(d => d.Id);
         }
 
-        [HttpGet(Name="Rip")]
+        [HttpGet]
+        [Route("Rips")]
         public IEnumerable<Rip> Rips()
         {
             var rips = new List<Rip>();
 
-            foreach(var disc in Worker.DiscDrives)
+            foreach (var disc in Worker.DiscDrives)
             {
                 var tempDir = new DirectoryInfo(disc.TempDirectoryPath);
                 var tempFile = tempDir.GetFiles("*.tmp")
@@ -48,7 +50,8 @@ namespace RipVanBluRay.Controllers
             return rips;
         }
 
-        [HttpPost(Name="Rip")]
+        [HttpGet]
+        [Route("Rip")]
         public Rip Rip(string id)
         {
             var rip = new Rip();
@@ -66,7 +69,7 @@ namespace RipVanBluRay.Controllers
             var logDir = new DirectoryInfo(discDrive.LogDirectoryPath);
             var logFiles = logDir.GetFiles("*.txt")
                 .OrderByDescending(f => f.LastWriteTime)
-                .Select(f => f.Name); 
+                .Select(f => f.Name);
 
             rip.DiscDriveId = discDrive.Id;
             rip.DiscLabel = discDrive.Label;
@@ -77,7 +80,8 @@ namespace RipVanBluRay.Controllers
             return rip;
         }
 
-        [HttpPost(Name="LogFileContent")]
+        [HttpGet]
+        [Route("LogFileContent")]
         public List<string> LogFileContent(string id, string logFileName)
         {
             var discDrive = Worker.DiscDrives.Where(d => d.Id == id).FirstOrDefault();
