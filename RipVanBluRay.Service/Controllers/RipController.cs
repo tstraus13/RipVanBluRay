@@ -48,7 +48,7 @@ namespace RipVanBluRay.Controllers
             return rips;
         }
 
-        [HttpGet]
+        [HttpPost]
         public Rip GetRip(string id)
         {
             var rip = new Rip();
@@ -77,7 +77,7 @@ namespace RipVanBluRay.Controllers
             return rip;
         }
 
-        [HttpGet]
+        [HttpPost]
         public List<string> GetLogFileContent(string id, string logFileName)
         {
             var discDrive = Worker.DiscDrives.Where(d => d.Id == id).FirstOrDefault();
