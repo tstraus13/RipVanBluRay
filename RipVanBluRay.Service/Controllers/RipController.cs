@@ -12,13 +12,13 @@ namespace RipVanBluRay.Controllers
     [Route("[controller]")]
     public class RipController : ControllerBase
     {
-        [HttpGet]
+        [HttpGet(Name="DiscDrives")]
         public IEnumerable<string> DiscDrives()
         {
             return Worker.DiscDrives.Select(d => d.Id);
         }
 
-        [HttpGet]
+        [HttpGet(Name="Rip")]
         public IEnumerable<Rip> Rips()
         {
             var rips = new List<Rip>();
@@ -48,7 +48,7 @@ namespace RipVanBluRay.Controllers
             return rips;
         }
 
-        [HttpPost]
+        [HttpPost(Name="Rip")]
         public Rip Rip(string id)
         {
             var rip = new Rip();
@@ -77,7 +77,7 @@ namespace RipVanBluRay.Controllers
             return rip;
         }
 
-        [HttpPost]
+        [HttpPost(Name="LogFileContent")]
         public List<string> LogFileContent(string id, string logFileName)
         {
             var discDrive = Worker.DiscDrives.Where(d => d.Id == id).FirstOrDefault();
