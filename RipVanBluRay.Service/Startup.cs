@@ -24,7 +24,7 @@ namespace RipVanBluRay
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(a => a.SwaggerEndpoint("/api/v1/swagger.json", "RipVanBluRay API v1"));
+                app.UseSwaggerUI();
             }
 
             app.UseRouting();
