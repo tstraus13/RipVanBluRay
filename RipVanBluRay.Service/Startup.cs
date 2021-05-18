@@ -12,10 +12,7 @@ namespace RipVanBluRay
         {
             services.AddHostedService<Worker>();
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "RipVanBluRay API", Version = "v1" });
-            });
+            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
