@@ -19,7 +19,7 @@ namespace RipVanBluRay
         private Timer DiscTimer;
         private Timer MoveTimer;
 
-        private List<DiscDrive> DiscDrives = new List<DiscDrive>();
+        internal static List<DiscDrive> DiscDrives = new List<DiscDrive>();
 
         private List<Process> MoveProcesses = new List<Process>();
         private ConcurrentQueue<string> FilesToMove = new ConcurrentQueue<string>();
