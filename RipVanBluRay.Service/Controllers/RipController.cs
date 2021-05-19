@@ -41,7 +41,7 @@ namespace RipVanBluRay.Controllers
                 {
                     DiscDriveId = disc.Id,
                     DiscLabel = disc.Label,
-                    TempFileSize = tempFile.Length,
+                    TempFileSize = tempFile == null ? 0 : tempFile.Length,
                     DiscMedia = disc.DiscMedia,
                     LogFiles = logFiles
                 });
