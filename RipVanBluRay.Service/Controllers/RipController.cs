@@ -73,7 +73,7 @@ namespace RipVanBluRay.Controllers
 
             rip.DiscDriveId = discDrive.Id;
             rip.DiscLabel = discDrive.Label;
-            rip.TempFileSize = tempFile.Length;
+            rip.TempFileSize = tempFile == null ? 0 : tempFile.Length;
             rip.DiscMedia = discDrive.DiscMedia;
             rip.LogFiles = logFiles;
 
