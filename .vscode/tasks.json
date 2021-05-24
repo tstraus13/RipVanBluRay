@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/RipVanBluRay.Service/RipVanBluRay.csproj",
+                "${workspaceFolder}/RipVanBluRay.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
