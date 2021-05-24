@@ -16,5 +16,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RipVanLibrary\RipVanLibrary.csproj" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RipVanBluRay.Models
+namespace RipVanLibrary
 {
     public class Rip
     {
@@ -13,5 +13,13 @@ namespace RipVanBluRay.Models
         public long TempFileSize { get; set; }
         public MediaType DiscMedia { get; set; }
         public IEnumerable<string> LogFiles { get; set; }
+    }
+
+    public enum MediaType
+    {
+        Audio,
+        DVD,
+        BluRay,
+        None
     }
 }

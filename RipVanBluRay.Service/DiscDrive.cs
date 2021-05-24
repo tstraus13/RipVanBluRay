@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using RipVanLibrary;
 
 namespace RipVanBluRay
 {
@@ -88,13 +89,5 @@ namespace RipVanBluRay
         {
             LocalSystem.ExecuteBackgroundCommand($"eject {Path}");
         }
-    }
-
-    public enum MediaType
-    {
-        Audio,
-        DVD,
-        BluRay,
-        None
     }
 }
