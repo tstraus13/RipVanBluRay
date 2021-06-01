@@ -42,9 +42,23 @@ a, .btn-link {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+.rotate {
+    animation: rotation 0.2s infinite linear;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
     }
+
+    to {
+        transform: rotate(359deg);
+    }
+}

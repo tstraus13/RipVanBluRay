@@ -28,7 +28,6 @@ namespace RipVanMonitor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<RipService>();
         }
 
@@ -46,7 +45,7 @@ namespace RipVanMonitor
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

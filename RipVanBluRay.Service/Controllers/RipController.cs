@@ -28,14 +28,20 @@ namespace RipVanBluRay.Controllers
             foreach (var disc in Worker.DiscDrives)
             {
                 var tempDir = new DirectoryInfo(disc.TempDirectoryPath);
-                var tempFile = tempDir.GetFiles("*.tmp")
-                    .OrderByDescending(f => f.LastWriteTime)
-                    .FirstOrDefault();
+                FileInfo tempFile = null;
+
+                if (tempDir.Exists)
+                    tempFile = tempDir.GetFiles("*.tmp")
+                        .OrderByDescending(f => f.LastWriteTime)
+                        .FirstOrDefault();
 
                 var logDir = new DirectoryInfo(disc.LogDirectoryPath);
-                var logFiles = logDir.GetFiles("*.txt")
-                    .OrderByDescending(f => f.LastWriteTime)
-                    .Select(f => f.Name);
+                IEnumerable<string> logFiles = null;
+
+                if (logDir.Exists)
+                    logFiles = logDir.GetFiles("*.txt")
+                        .OrderByDescending(f => f.LastWriteTime)
+                        .Select(f => f.Name);
 
                 rips.Add(new Rip()
                 {
@@ -43,7 +49,7 @@ namespace RipVanBluRay.Controllers
                     DiscLabel = disc.Label,
                     TempFileSize = tempFile == null ? 0 : tempFile.Length,
                     DiscMedia = disc.DiscMedia,
-                    LogFiles = logFiles
+                    LogFiles = logFiles == null ? new List<string>() : logFiles
                 });
             }
 

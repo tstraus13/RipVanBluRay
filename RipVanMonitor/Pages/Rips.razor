@@ -1,0 +1,56 @@
+﻿@page "/rips"
+
+@using RipVanMonitor.Data
+@using RipVanLibrary 
+@inject RipService RipService
+
+<h1>Rip Status</h1>
+
+@if (rips == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Drive Id</th>
+                <th>Disc Label</th>
+                <th>Temp File Size</th>
+                <th>Log Files</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rip in rips)
+            {
+                <tr>
+                    <td><img class="rotate" src="/img/cdrom.png" width="150" /></td>
+                    <td>@rip.DiscDriveId</td>
+                    <td>@rip.DiscLabel</td>
+                    <td>@(rip.TempFileSize/1048576) MB</td>
+                    <td>
+                        <form>
+                            <select>
+                                @foreach (var logFile in rip.LogFiles)
+                                {
+                                    <option value="@logFile">@logFile</option>
+                                }
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<Rip> rips;
+
+    protected override async Task OnInitializedAsync()
+    {
+        rips = await RipService.GetRips();
+    }
+}

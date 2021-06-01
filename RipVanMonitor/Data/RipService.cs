@@ -12,16 +12,31 @@ namespace RipVanMonitor.Data
     public class RipService
     {
         private static readonly HttpClient client = new HttpClient();
+        private static readonly JsonSerializerOptions options = new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
         public async Task<IEnumerable<string>> GetDiscDrives()
         {
             ClearClient();
 
-            var resp = client.GetStreamAsync("https://localhost:5001/Rip/DiscDrives");
+            var resp = client.GetStreamAsync("http://localhost:5000/Rip/DiscDrives");
 
-            var drives = await JsonSerializer.DeserializeAsync<List<string>>(await resp);
+            var drives = await JsonSerializer.DeserializeAsync<List<string>>(await resp, options);
 
             return drives;
+        }
+
+        public async Task<IEnumerable<Rip>> GetRips()
+        {
+            ClearClient();
+
+            var resp = client.GetStreamAsync("http://localhost:5000/Rip/Rips");
+
+            var rips = await JsonSerializer.DeserializeAsync<IEnumerable<Rip>>(await resp, options);
+
+            return rips;
         }
 
         private void ClearClient()

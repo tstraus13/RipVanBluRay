@@ -5,7 +5,7 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": ".NET Core Launch (Service)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -18,10 +18,14 @@
             "stopAtEntry": false
         },
         {
-            "name": ".NET Core Attach",
+            "name": ".NET Core Launch (Web Frontend)",
             "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
+            "request": "launch",
+            "program": "${workspaceFolder}/RipVanMonitor/bin/Debug/net5.0/RipVanMonitor.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/RipVanMonitor",
+            "console": "internalConsole",
+            "stopAtEntry": false
         }
     ]
 }
