@@ -26,7 +26,7 @@ else
             @foreach (var rip in rips)
             {
                 <tr>
-                    <td><img class="rotate" src="/img/cdrom.png" width="150" /></td>
+                    <td><img class="rotate-start" src="/img/cdrom.png" width="150" /></td>
                     <td>@rip.DiscDriveId</td>
                     <td>@rip.DiscLabel</td>
                     <td>@(rip.TempFileSize/1048576) MB</td>
@@ -51,6 +51,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        rips = await RipService.GetRips();
+        base.OnInitialized();
+        var timer = new System.Threading.Timer((_) =>
+        {
+            InvokeAsync( async ()  =>
+            {
+                rips = await RipService.GetRips();
+                StateHasChanged();
+            });
+        }, null, 0, 5000);
     }
 }

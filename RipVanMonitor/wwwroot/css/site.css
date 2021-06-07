@@ -49,16 +49,44 @@ a, .btn-link {
     top: 0.5rem;
 }
 
-.rotate {
-    animation: rotation 0.2s infinite linear;
+.rotate-start {
+    animation-name: rotation-start, rotation;
+    animation-duration: 6s, 0.2s;
+    animation-delay: 0s, 6s;
+    animation-timing-function: ease-in, linear;
+    animation-iteration-count: 1, infinite;
+}
+
+.rotate-end {
+    animation: rotation-end 6s 1 ease-out;
 }
 
 @keyframes rotation {
+    from {
+        transform: rotate(1440deg);
+    }
+
+    to {
+        transform: rotate(1800deg);
+    }
+}
+
+@keyframes rotation-start {
     from {
         transform: rotate(0deg);
     }
 
     to {
-        transform: rotate(359deg);
+        transform: rotate(1440deg);
+    }
+}
+
+@keyframes rotation-end {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(1440deg);
     }
 }
