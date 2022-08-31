@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using StrausTech.CommonLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,15 @@ namespace RipVanBluRay
 
         private static IConfigurationRoot ConfigFile { get; set; }
 
-        private static readonly string DefaultDirectory = Path.Combine(LocalSystem.UserDirectory, ".RipVanBluRay");
+        public static string UserDirectory
+        {
+            get
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            }
+        }
+
+        private static readonly string DefaultDirectory = Path.Combine(UserDirectory, ".RipVanBluRay");
 
         /// <summary>
         /// Initializes the settings and loads any settings from
@@ -51,11 +60,11 @@ namespace RipVanBluRay
 
             MakeMKVPath = !string.IsNullOrEmpty(ConfigFile.GetSection("MakeMKV")["Path"])
                 ? ConfigFile.GetSection("MakeMKV")["Path"]
-                : LocalSystem.ExecuteCommand("which makemkvcon").Trim();
+                : LocalSystem.Linux.Execute("which makemkvcon").StdOut.Trim();
             
             AbcdePath = !string.IsNullOrEmpty(ConfigFile.GetSection("ABCDE")["Path"])
                 ? ConfigFile.GetSection("ABCDE")["Path"]
-                : LocalSystem.ExecuteCommand("which abcde").Trim();
+                : LocalSystem.Linux.Execute("which abcde").StdOut.Trim();
 
             if (!string.IsNullOrEmpty(ConfigFile["TempDirectory"]))
             {
@@ -102,7 +111,7 @@ namespace RipVanBluRay
             if (!string.IsNullOrEmpty(ConfigFile.GetSection("MakeMKV")["Key"]))
             {
                 var key = ConfigFile.GetSection("MakeMKV")["Key"];
-                var makeMkvSettingsFilePath = Path.Combine(LocalSystem.UserDirectory, ".MakeMKV", "settings.conf");
+                var makeMkvSettingsFilePath = Path.Combine(UserDirectory, ".MakeMKV", "settings.conf");
 
                 if (File.Exists(makeMkvSettingsFilePath))
                 {

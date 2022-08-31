@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using RipVanBluRay.Models;
+using StrausTech.CommonLib;
 
 namespace RipVanBluRay
 {
@@ -60,7 +62,9 @@ namespace RipVanBluRay
 
         private void DetectDiscDrives()
         {
-            var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(LocalSystem.ExecuteCommand("lsblk -I 11 -d -J -o NAME"));
+            var process = LocalSystem.Linux.Execute("lsblk -I 11 -d -J -o NAME");
+
+            var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(process.StdOut);
 
             foreach (var dev in json.blockdevices)
                 DiscDrives.Add(new DiscDrive(dev.name));
@@ -121,7 +125,7 @@ namespace RipVanBluRay
                         // in progress of being moved
                         var mvName = Path.Combine(drive.TempDirectoryPath, $"{drive.Label}.{Guid.NewGuid().ToString()}.tmp");
                         var rename = $@"mv ""{file}"" ""{mvName}""";
-                        LocalSystem.ExecuteCommand(rename);
+                        LocalSystem.Linux.Execute(rename);
 
                         var cmd = $@"mv ""{mvName}"" ""{Path.Combine(Settings.CompletedDirectory, $@"{drive.Label}.{Guid.NewGuid().ToString()}.mkv")}""";
                         //LocalSystem.ExecuteBackgroundCommand(cmd);
@@ -155,9 +159,9 @@ namespace RipVanBluRay
             Directory.CreateDirectory(drive.TempDirectoryPath);
             Directory.CreateDirectory(drive.LogDirectoryPath);
 
-            drive.Label = LocalSystem.ExecuteCommand($"blkid -o value -s LABEL {drive.Path}").Trim();
+            drive.Label = LocalSystem.Linux.Execute($"blkid -o value -s LABEL {drive.Path}").StdOut.Trim();
 
-            return LocalSystem.ExecuteBackgroundCommand($@"{Settings.MakeMKVPath} --messages=""{logFilePath}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
+            return LocalSystem.Linux.ExecuteBackground($@"{Settings.MakeMKVPath} --messages=""{logFilePath}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
         }
 
         private Process RipMusic(DiscDrive drive)
@@ -177,7 +181,7 @@ namespace RipVanBluRay
                 { "WAVOUTPUTDIR", drive.TempDirectoryPath}
             };
 
-            return LocalSystem.ExecuteBackgroundCommand($@"{Settings.AbcdePath} -d {drive.Path} -o {Settings.FileType} -j {Settings.EncoderJobs} -N -D 2>""{logFilePath}""", null, env);
+            return LocalSystem.Linux.ExecuteBackground($@"{Settings.AbcdePath} -d {drive.Path} -o {Settings.FileType} -j {Settings.EncoderJobs} -N -D 2>""{logFilePath}""", null, env);
         }
 
         private void MoveFile(object state)
@@ -194,7 +198,7 @@ namespace RipVanBluRay
                     {
                         if (FilesToMove.TryDequeue(out string cmd))
                         {
-                            MoveProcesses.Add(LocalSystem.ExecuteBackgroundCommand(cmd));
+                            MoveProcesses.Add(LocalSystem.Linux.ExecuteBackground(cmd));
                         }
                     }
 

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using StrausTech.CommonLib;
 
 namespace RipVanBluRay
 {
@@ -62,7 +63,7 @@ namespace RipVanBluRay
         {
             get
             {
-                return LocalSystem.ExecuteCommand($"udevadm info -q property {Path}").Contains("ID_CDROM_MEDIA=1");
+                return LocalSystem.Linux.Execute($"udevadm info -q property {Path}").StdOut.Contains("ID_CDROM_MEDIA=1");
             }
         }
 
@@ -70,7 +71,7 @@ namespace RipVanBluRay
         {
             get
             {
-                switch (LocalSystem.ExecuteCommand($"udevadm info -q property {Path}"))
+                switch (LocalSystem.Linux.Execute($"udevadm info -q property {Path}").StdOut)
                 {
                     case string a when a.Contains("ID_CDROM_MEDIA_CD=1") && a.Contains("ID_CDROM_MEDIA_TRACK_COUNT_AUDIO"):
                         return MediaType.Audio;
@@ -86,7 +87,7 @@ namespace RipVanBluRay
 
         public void Eject()
         {
-            LocalSystem.ExecuteBackgroundCommand($"eject {Path}");
+            LocalSystem.Linux.ExecuteBackground($"eject {Path}");
         }
     }
 
