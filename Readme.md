@@ -32,7 +32,7 @@ In the repository there is a file named settings.json. It has all the settings t
 
 ## Building
 
-This application is written in .Net 5 as a Hosted Service. You can build an executable yourself. When inside the root directory of the solution run the follow:
+This application is written in .Net 6 as a Hosted Service. You can build an executable yourself. When inside the root directory of the solution run the follow:
 
 ```dotnet publish -r linux-x64 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true```
 
