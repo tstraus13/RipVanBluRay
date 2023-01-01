@@ -1,0 +1,7 @@
+@model RipVanBluRay.Models.SharedState;
+
+@foreach (var drive in Model.DiscDrives)
+{
+    @drive.Path
+    <br>
+}

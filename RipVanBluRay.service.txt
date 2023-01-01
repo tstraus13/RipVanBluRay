@@ -11,4 +11,4 @@ Group=
 ExecStart=/usr/local/bin/rvbr
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
