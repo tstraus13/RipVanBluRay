@@ -1,4 +1,5 @@
 using RipVanBluRay;
+using RipVanBluRay.Hubs;
 using RipVanBluRay.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,7 @@ builder.Services.AddSingleton(new SharedState());
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
 builder.Services.AddHostedService<Worker>();
 
 var app = builder.Build();
@@ -36,6 +38,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapDefaultControllerRoute();
     endpoints.MapRazorPages();
     endpoints.MapControllers();
+    endpoints.MapHub<RipHub>("/hubs/rip");
 });
 
 app.Run();

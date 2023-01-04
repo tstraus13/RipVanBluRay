@@ -1,7 +1,47 @@
 @model RipVanBluRay.Models.SharedState;
 
-@foreach (var drive in Model.DiscDrives)
+@for (var i = 0; i < Model.DiscDrives.Count(); i++)
 {
-    @drive.Path
-    <br>
+    var drive = Model.DiscDrives[i];
+
+    <div class="row @(i == 0 ? "border-top" : "") border-start border-top border-end border-bottom">
+        <div class="col-lg-2">
+            <img id="cdrom" class="img-fluid" src="~/images/cdrom.png" alt="CD-ROM">
+        </div>
+        <div class="col-lg-8 align-self-center">
+            <div class="row align-items-start">
+                <div class="col text-center"><h4><u>Id</u></h4></div>
+                <div class="col text-center"><h4><u>Path</u></h4></div>
+                <div class="col text-center"><h4><u>Disc Present</u></h4></div>
+                <div class="col text-center"><h4><u>Media Type</u></h4></div>
+            </div>
+            <div class="row align-items-start">
+                <div class="col text-center">@drive.Id</div>
+                <div class="col text-center">@drive.Path</div>
+                <div class="col text-center">@(drive.DiscPresent ? "Yes" : "No")</div>
+                <div class="col text-center">@drive.DiscMedia</div>
+            </div>
+            <hr class="mt-4 mb-4">
+            <div class="row align-items-start">
+                <div class="col text-center"><h4><u>In Use</u></h4></div>
+                <div class="col text-center"><h4><u>Label</u></h4></div>
+                <div class="col text-center"><h4><u>Disc Size</u></h4></div>
+                <div class="col text-center"><h5><u>Current Ripped Size</u></h5></div>
+            </div>
+            <div class="row align-items-start">
+                <div class="col text-center">@(drive.InUse ? "Yes" : "No")</div>
+                <div class="col text-center">@drive.Label</div>
+                <div class="col text-center">@(drive.SizeGigaBytes <= 1 ? $"{drive.SizeMegaBytes} MB" : $"{drive.SizeGigaBytes} GB")</div>
+                <div class="col text-center">@(drive.SizeGigaBytes <= 1 ? $"{drive.SizeMegaBytes} MB" : $"{drive.SizeGigaBytes} GB")</div>
+            </div>
+        </div>
+        <div class="col-lg-2 text-center align-self-center">
+            <button class="btn btn-primary">Log File</button>
+        </div>
+    </div>
+}
+
+@section Scripts
+{
+    <script src="~/js/site.js"></script>
 }

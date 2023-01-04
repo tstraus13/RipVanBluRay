@@ -41,7 +41,7 @@ public class DiscDrive
     { 
         get
         {
-            return RipProcess == null ? false : true;
+            return RipProcess != null;
         }
     }
 
@@ -82,6 +82,33 @@ public class DiscDrive
                 default:
                     return MediaType.None;
             }
+        }
+    }
+
+    public long SizeBytes
+    {
+        get
+        {
+            if (long.TryParse(LocalSystem.Linux.Execute($"blockdev --getsize64 {Path}").StdOut, out long result))
+                return result;
+            else
+                return 0;
+        }
+    }
+
+    public int SizeMegaBytes
+    {
+        get
+        {
+            return (int) Math.Round(SizeBytes / 1000000.0);
+        }
+    }
+
+    public int SizeGigaBytes
+    {
+        get
+        {
+            return (int) Math.Round(SizeBytes / 1000000000.0);
         }
     }
 

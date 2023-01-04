@@ -22,6 +22,10 @@
     {
       "library": "bootstrap-icons@1.10.3",
       "destination": "wwwroot/lib/bootstrap-icons/"
+    },
+    {
+      "library": "microsoft-signalr@6.0.11",
+      "destination": "wwwroot/lib/signalr/"
     }
   ]
 }

@@ -140,7 +140,7 @@ public class Worker : IHostedService, IDisposable
         CheckDiscRunning = false;
     }
 
-    private Process RipMovie(DiscDrive drive)
+    private Process? RipMovie(DiscDrive drive)
     {
         Logger.LogInformation($"Drive {drive.Id} has started ripping");
 
@@ -152,7 +152,9 @@ public class Worker : IHostedService, IDisposable
 
         drive.Label = LocalSystem.Linux.Execute($"blkid -o value -s LABEL {drive.Path}").StdOut.Trim();
 
-        return LocalSystem.Linux.ExecuteBackground($@"{Settings.MakeMKVPath} --messages=""{logFilePath}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
+        var process = LocalSystem.Linux.ExecuteBackground($@"{Settings.MakeMKVPath} --messages=""{logFilePath}"" --robot mkv dev:{drive.Path} 0 --minlength={Settings.MinimumLength} ""{drive.TempDirectoryPath}""");
+
+        return process;
     }
 
     private Process RipMusic(DiscDrive drive)

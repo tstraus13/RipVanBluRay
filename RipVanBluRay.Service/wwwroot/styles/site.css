@@ -1,0 +1,38 @@
+.rotate-start {
+    animation: rotation-start 4s ease-in;
+  }
+
+.rotate-middle {
+    animation: rotation-middle 0.5s linear infinite;
+}
+
+.rotate-end {
+    animation: rotation-end 4s ease-out;
+}
+
+@keyframes rotation-start {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(1440deg);
+    }
+  }
+
+@keyframes rotation-middle {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+@keyframes rotation-end {
+    from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(1440deg);
+      }
+}

@@ -14,6 +14,8 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        ViewData["Title"] = "RipVanBluRay";
+
         return View(_sharedState);
     }
 }

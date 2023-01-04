@@ -11,6 +11,10 @@
         @RenderSection("Styles", required: false)
     </head>
     
+    <div class="container text-center mb-5">
+        <h1 class="display-1">Rip Van Blu Ray</h1>
+    </div>
+
     <div class="container body-content">
         @RenderBody()
     </div>
@@ -18,6 +22,9 @@
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/signalr/signalr.min.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/rip-hub.client.js"></script>
+    <script src="~/js/site.js"></script>
     @RenderSection("Scripts", required: false)
 </html>

@@ -32,6 +32,7 @@
             "args": [
                 "watch",
                 "run",
+                "--project",
                 "${workspaceFolder}/RipVanBluRay.Service/RipVanBluRay.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
