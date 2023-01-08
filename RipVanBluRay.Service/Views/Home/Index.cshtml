@@ -1,12 +1,32 @@
 @model RipVanBluRay.Models.SharedState;
 
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @for (var i = 0; i < Model.DiscDrives.Count(); i++)
 {
     var drive = Model.DiscDrives[i];
 
     <div class="row @(i == 0 ? "border-top" : "") border-start border-top border-end border-bottom">
         <div class="col-lg-2">
-            <img id="cdrom" class="img-fluid" src="~/images/cdrom.png" alt="CD-ROM">
+            <img id="@drive.Id-cdrom-image" class="img-fluid@(drive.DiscPresent || drive.InUse ? " rotate-middle" : "")" src="~/images/cdrom.png" alt="CD-ROM">
         </div>
         <div class="col-lg-8 align-self-center">
             <div class="row align-items-start">
@@ -18,30 +38,23 @@
             <div class="row align-items-start">
                 <div class="col text-center">@drive.Id</div>
                 <div class="col text-center">@drive.Path</div>
-                <div class="col text-center">@(drive.DiscPresent ? "Yes" : "No")</div>
-                <div class="col text-center">@drive.DiscMedia</div>
+                <div id="@drive.Id-disc-present" class="col text-center">@(drive.DiscPresent ? "Yes" : "No")</div>
+                <div id="@drive.Id-disc-media" class="col text-center">@drive.DiscMedia</div>
             </div>
             <hr class="mt-4 mb-4">
             <div class="row align-items-start">
-                <div class="col text-center"><h4><u>In Use</u></h4></div>
                 <div class="col text-center"><h4><u>Label</u></h4></div>
                 <div class="col text-center"><h4><u>Disc Size</u></h4></div>
                 <div class="col text-center"><h5><u>Current Ripped Size</u></h5></div>
             </div>
             <div class="row align-items-start">
-                <div class="col text-center">@(drive.InUse ? "Yes" : "No")</div>
-                <div class="col text-center">@drive.Label</div>
-                <div class="col text-center">@(drive.SizeGigaBytes <= 1 ? $"{drive.SizeMegaBytes} MB" : $"{drive.SizeGigaBytes} GB")</div>
-                <div class="col text-center">@(drive.SizeGigaBytes <= 1 ? $"{drive.SizeMegaBytes} MB" : $"{drive.SizeGigaBytes} GB")</div>
+                <div id="@drive.Id-label" class="col text-center">@drive.Label</div>
+                <div id="@drive.Id-disc-size" class="col text-center">@(drive.SizeGigaBytes <= 1 ? $"{drive.SizeMegaBytes} MB" : $"{drive.SizeGigaBytes} GB")</div>
+                <div id="@drive.Id-rip-size" class="col text-center">@(drive.CurrentRipSizeGigaBytes <= 1 ? $"{drive.CurrentRipSizeMegaBytes} MB" : $"{drive.CurrentRipSizeGigaBytes} GB")</div>
             </div>
         </div>
         <div class="col-lg-2 text-center align-self-center">
             <button class="btn btn-primary">Log File</button>
         </div>
     </div>
-}
-
-@section Scripts
-{
-    <script src="~/js/site.js"></script>
 }

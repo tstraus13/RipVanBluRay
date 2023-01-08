@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using Microsoft.AspNetCore.SignalR.Client;
 using RipVanBluRay.Models;
 using StrausTech.CommonLib;
 
@@ -8,6 +9,8 @@ namespace RipVanBluRay;
 
 public class Worker : IHostedService, IDisposable
 {
+    private HubConnection ripHubClinet;
+    
     private readonly ILogger<Worker> Logger;
     private bool CheckDiscRunning = false;
 
@@ -21,6 +24,8 @@ public class Worker : IHostedService, IDisposable
         Logger = logger;
         SharedState = sharedState;
 
+        ConfigureHubConnection();
+        
         Settings.Init();
         DetectDiscDrives();
     }
@@ -35,8 +40,8 @@ public class Worker : IHostedService, IDisposable
         if (!Settings.IsAbcdeAvailable)
             Logger.LogInformation($"abcde executable was not found! Will not Rip any Music CDs");
 
-        DiscTimer = new Timer(CheckDiscDrives, null, TimeSpan.Zero, TimeSpan.FromSeconds(20));
-        MoveTimer = new Timer(MoveFile, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+        DiscTimer = new Timer(CheckDiscDrives, null, TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20));
+        MoveTimer = new Timer(MoveFile, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
 
         return Task.CompletedTask;
     }
@@ -122,6 +127,8 @@ public class Worker : IHostedService, IDisposable
                     //LocalSystem.ExecuteBackgroundCommand(cmd);
                     SharedState.FilesToMove.Enqueue(cmd);
                 }
+                
+                drive.Label = "";
             }
 
             else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("abcde"))
@@ -133,11 +140,19 @@ public class Worker : IHostedService, IDisposable
 
                 drive.RipProcess.Close();
                 drive.RipProcess = null;
+                drive.Label = "";
                 drive.Eject();
             }
         }
 
         CheckDiscRunning = false;
+        
+        if (ripHubClinet.State != HubConnectionState.Connected)
+            HubConnect();
+
+        foreach (var drive in SharedState.DiscDrives)
+            ripHubClinet.InvokeAsync("SendDiscDriveUpdate", drive)
+                .GetAwaiter().GetResult();
     }
 
     private Process? RipMovie(DiscDrive drive)
@@ -174,6 +189,8 @@ public class Worker : IHostedService, IDisposable
             { "WAVOUTPUTDIR", drive.TempDirectoryPath}
         };
 
+        drive.Label = LocalSystem.Linux.Execute($"blkid -o value -s LABEL {drive.Path}").StdOut.Trim();
+        
         return LocalSystem.Linux.ExecuteBackground($@"{Settings.AbcdePath} -d {drive.Path} -o {Settings.FileType} -j {Settings.EncoderJobs} -N -D 2>""{logFilePath}""", null, env);
     }
 
@@ -200,8 +217,54 @@ public class Worker : IHostedService, IDisposable
         }
     }
 
+    private void ConfigureHubConnection()
+    {
+        ripHubClinet = new HubConnectionBuilder()
+            .WithUrl("https://localhost:5001/hubs/rip", options =>
+            {
+                options.HttpMessageHandlerFactory = (msg) =>
+                {
+                    if (msg is HttpClientHandler clientHandler)
+                    {
+                        // bypass SSL certificate
+                        clientHandler.ServerCertificateCustomValidationCallback +=
+                            (sender, certificate, chain, sslPolicyErrors) => { return true; };
+                    }
+
+                    return msg;
+                };
+            })
+            .WithAutomaticReconnect()
+            .Build();
+
+        ripHubClinet.Closed += async (error) =>
+        {
+            Logger.LogError(error, "Hub Connection Error!");
+            await Task.Delay(new Random().Next(0,5) * 1000);
+            await ripHubClinet.StartAsync();
+        };
+    }
+
+    private void HubConnect()
+    {
+        try
+        {
+            ripHubClinet.StartAsync()
+                .GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error Connecting to Hub!");
+        }
+    }
+    
     public void Dispose()
     {
+        ripHubClinet.StopAsync()
+            .GetAwaiter().GetResult();
+        ripHubClinet.DisposeAsync()
+            .GetAwaiter().GetResult();
+        
         DiscTimer?.Dispose();
         MoveTimer?.Dispose();
     }

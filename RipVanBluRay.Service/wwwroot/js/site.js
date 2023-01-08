@@ -1,50 +1,44 @@
-var timer;
+let timer;
 
-$(document).ready(function () {
+function CD_START(id) {
 
-    CD_START();
-
-});
-
-function CD_START() {
-
-    $('#cdrom').removeAttr('style');
+    $('#' + id + '-cdrom-image').removeAttr('style');
 
     clearTimeout(timer);
 
-    $('#cdrom').removeClass("rotate-middle");
-    $('#cdrom').removeClass("rotate-end");
+    $('#' + id + '-cdrom-image').removeClass("rotate-middle");
+    $('#' + id + '-cdrom-image').removeClass("rotate-end");
 
-    $('#cdrom').addClass("rotate-start");
+    $('#' + id + '-cdrom-image').addClass("rotate-start");
 
-    var timer = setTimeout(CD_MIDDLE, 4000);
+    var timer = setTimeout(function () { CD_MIDDLE(id)}, 4000);
 
 }
 
-function CD_MIDDLE() {
+function CD_MIDDLE(id) {
 
     clearTimeout(timer);
 
-    $('#cdrom').removeClass("rotate-start");
-    $('#cdrom').removeClass("rotate-end");
+    $('#' + id + '-cdrom-image').removeClass("rotate-start");
+    $('#' + id + '-cdrom-image').removeClass("rotate-end");
 
-    $('#cdrom').addClass("rotate-middle");
+    $('#' + id + '-cdrom-image').addClass("rotate-middle");
 
-    var timer = setTimeout(CD_END, 8000);
+    //var timer = setTimeout(CD_END(id), 8000);
 
 }
 
-function CD_END() {
+function CD_END(id) {
 
-    $('#cdrom').removeAttr('style');
+    $('#' + id + '-cdrom-image').removeAttr('style');
 
-    clearTimeout(timer);
+    //clearTimeout(timer);
 
-    $('#cdrom').removeClass("rotate-middle");
-    $('#cdrom').removeClass("rotate-start");
+    $('#' + id + '-cdrom-image').removeClass("rotate-middle");
+    $('#' + id + '-cdrom-image').removeClass("rotate-start");
 
-    $('#cdrom').addClass("rotate-end");
+    $('#' + id + '-cdrom-image').addClass("rotate-end");
 
-    var timer = setTimeout(CD_START, 4000);
+    //var timer = setTimeout(CD_START, 4000);
 
 }

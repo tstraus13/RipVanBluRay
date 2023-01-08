@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
 using StrausTech.CommonLib;
 
 namespace RipVanBluRay.Models;
@@ -9,23 +10,47 @@ public class DiscDrive
 
     public string Label { get; set; }
 
+    [JsonIgnore]
+    public bool InUse => RipProcess != null;
+    
+    [JsonIgnore]
     public Process RipProcess {get; set;}
 
-    public string TempDirectoryPath
+    public string TempDirectoryPath => System.IO.Path.Combine(Settings.TempDirectory, Id);
+
+    public string LogDirectoryPath => System.IO.Path.Combine(Settings.LogsDirectory, Id);
+
+    public string CurrentLogFileContents
     {
         get
         {
-            return System.IO.Path.Combine(Settings.TempDirectory, Id);
+            var dir = new DirectoryInfo(LogDirectoryPath);
+            var file = dir.GetFiles().MinBy(f => f.CreationTime);
+
+            if (file == null)
+                return "";
+
+            return System.IO.File.ReadAllText(file.FullName);
         }
     }
 
-    public string LogDirectoryPath
+    public long CurrentRipSizeBytes
     {
         get
         {
-            return System.IO.Path.Combine(Settings.LogsDirectory, Id);
+            var dir = new DirectoryInfo(TempDirectoryPath);
+            var file = dir.GetFiles().MinBy(f => f.CreationTime);
+
+            if (file == null)
+                return 0;
+
+            return file.Length;
         }
     }
+    
+    public int CurrentRipSizeMegaBytes => (int) Math.Round(CurrentRipSizeBytes / 1000000.0);
+
+    public int CurrentRipSizeGigaBytes => (int) Math.Round(CurrentRipSizeBytes / 1000000000.0);
     
     public DiscDrive()
     {
@@ -35,14 +60,6 @@ public class DiscDrive
     public DiscDrive(string id)
     {
         Id = id;
-    }
-
-    public bool InUse 
-    { 
-        get
-        {
-            return RipProcess != null;
-        }
     }
 
     public string Path
@@ -59,13 +76,7 @@ public class DiscDrive
         }
     }
 
-    public bool DiscPresent
-    {
-        get
-        {
-            return LocalSystem.Linux.Execute($"udevadm info -q property {Path}").StdOut.Contains("ID_CDROM_MEDIA=1");
-        }
-    }
+    public bool DiscPresent => LocalSystem.Linux.Execute($"udevadm info -q property {Path}").StdOut.Contains("ID_CDROM_MEDIA=1");
 
     public MediaType DiscMedia
     {
@@ -96,21 +107,9 @@ public class DiscDrive
         }
     }
 
-    public int SizeMegaBytes
-    {
-        get
-        {
-            return (int) Math.Round(SizeBytes / 1000000.0);
-        }
-    }
+    public int SizeMegaBytes => (int) Math.Round(SizeBytes / 1000000.0);
 
-    public int SizeGigaBytes
-    {
-        get
-        {
-            return (int) Math.Round(SizeBytes / 1000000000.0);
-        }
-    }
+    public int SizeGigaBytes => (int) Math.Round(SizeBytes / 1000000000.0);
 
     public void Eject()
     {
