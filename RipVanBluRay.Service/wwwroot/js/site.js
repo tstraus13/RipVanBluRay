@@ -42,3 +42,12 @@ function CD_END(id) {
     //var timer = setTimeout(CD_START, 4000);
 
 }
+
+async function LOG_FILE(id) {
+
+    $('.modal-body').html('');
+    $('.modal-title').text('');
+    
+    await ripHubClient.invoke('RequestDiscDriveUpdate', id);
+    
+}
