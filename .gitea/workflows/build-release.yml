@@ -26,3 +26,12 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Publish
+      run: dotnet publish -r linux-x64 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: rvbr
+        path: RipVanBluRay.Service/bin/Release/net8.0/linux-x64/publish/
+
+
