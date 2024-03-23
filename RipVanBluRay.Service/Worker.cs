@@ -9,20 +9,20 @@ namespace RipVanBluRay;
 
 public class Worker : IHostedService, IDisposable
 {
-    private HubConnection ripHubClinet;
+    private HubConnection _ripHubClient;
     
-    private readonly ILogger<Worker> Logger;
-    private bool CheckDiscRunning = false;
+    private readonly ILogger<Worker> _logger;
+    private bool _checkDiscRunning = false;
 
-    private Timer DiscTimer;
-    private Timer MoveTimer;
+    private Timer _discTimer;
+    private Timer _moveTimer;
 
-    private SharedState SharedState;
+    private SharedState _sharedState;
 
     public Worker(ILogger<Worker> logger, SharedState sharedState)
     {
-        Logger = logger;
-        SharedState = sharedState;
+        _logger = logger;
+        _sharedState = sharedState;
 
         ConfigureHubConnection();
         
@@ -32,26 +32,26 @@ public class Worker : IHostedService, IDisposable
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        Logger.LogInformation("Rip Van BluRay Service running.");
+        _logger.LogInformation("Rip Van BluRay Service running.");
 
         if (!Settings.IsMakeMKVAvailable)
-            Logger.LogInformation($"makemkvcon executable was not found! Will not Rip any DVDs, BluRays, or UHD Discs");
+            _logger.LogInformation($"makemkvcon executable was not found! Will not Rip any DVDs, BluRays, or UHD Discs");
 
         if (!Settings.IsAbcdeAvailable)
-            Logger.LogInformation($"abcde executable was not found! Will not Rip any Music CDs");
+            _logger.LogInformation($"abcde executable was not found! Will not Rip any Music CDs");
 
-        DiscTimer = new Timer(CheckDiscDrives, null, TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20));
-        MoveTimer = new Timer(MoveFile, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+        _discTimer = new Timer(CheckDiscDrives, null, TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20));
+        _moveTimer = new Timer(MoveFile, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
 
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        Logger.LogInformation("Rip Van BluRay is stopping.");
+        _logger.LogInformation("Rip Van BluRay is stopping.");
 
-        DiscTimer?.Change(Timeout.Infinite, 0);
-        MoveTimer?.Change(Timeout.Infinite, 0);
+        _discTimer?.Change(Timeout.Infinite, 0);
+        _moveTimer?.Change(Timeout.Infinite, 0);
 
         return Task.CompletedTask;
     }
@@ -63,17 +63,17 @@ public class Worker : IHostedService, IDisposable
         var json = JsonSerializer.Deserialize<Linux.LsBlkJson>(process.StdOut);
 
         foreach (var dev in json.blockdevices)
-            SharedState.DiscDrives.Add(new DiscDrive(dev.name));
+            _sharedState.DiscDrives.Add(new DiscDrive(dev.name));
     }
 
     private void CheckDiscDrives(object state)
     {
-        if (CheckDiscRunning)
+        if (_checkDiscRunning)
             return;
 
-        CheckDiscRunning = true;
+        _checkDiscRunning = true;
 
-        foreach (var drive in SharedState.DiscDrives)
+        foreach (var drive in _sharedState.DiscDrives)
         {
             if (!drive.InUse)
             {
@@ -103,10 +103,10 @@ public class Worker : IHostedService, IDisposable
 
             else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("makemkvcon"))
             {
-                Logger.LogInformation($"Drive {drive.Id} has finished ripping. Ejecting Disc...");
+                _logger.LogInformation($"Drive {drive.Id} has finished ripping. Ejecting Disc...");
 
                 if (drive.RipProcess.ExitCode != 0)
-                    Logger.LogWarning($"The Rip for {drive.Id} has exited with an abnormal code!");
+                    _logger.LogWarning($"The Rip for {drive.Id} has exited with an abnormal code!");
 
                 drive.RipProcess.Close();
                 drive.RipProcess = null;
@@ -125,7 +125,7 @@ public class Worker : IHostedService, IDisposable
 
                     var cmd = $@"mv ""{mvName}"" ""{Path.Combine(Settings.CompletedDirectory, $@"{drive.Label}.{Guid.NewGuid().ToString()}.mkv")}""";
                     //LocalSystem.ExecuteBackgroundCommand(cmd);
-                    SharedState.FilesToMove.Enqueue(cmd);
+                    _sharedState.FilesToMove.Enqueue(cmd);
                 }
                 
                 drive.Label = "";
@@ -133,10 +133,10 @@ public class Worker : IHostedService, IDisposable
 
             else if (drive.RipProcess.HasExited && drive.RipProcess.StartInfo.Arguments.Contains("abcde"))
             {
-                Logger.LogInformation($"Drive {drive.Id} has finished ripping. Ejecting Disc...");
+                _logger.LogInformation($"Drive {drive.Id} has finished ripping. Ejecting Disc...");
                 
                 if (drive.RipProcess.ExitCode != 0)
-                    Logger.LogWarning($"The Rip for {drive.Id} has exited with an abnormal code!");
+                    _logger.LogWarning($"The Rip for {drive.Id} has exited with an abnormal code!");
 
                 drive.RipProcess.Close();
                 drive.RipProcess = null;
@@ -145,19 +145,19 @@ public class Worker : IHostedService, IDisposable
             }
         }
 
-        CheckDiscRunning = false;
+        _checkDiscRunning = false;
         
-        if (ripHubClinet.State != HubConnectionState.Connected)
+        if (_ripHubClient.State != HubConnectionState.Connected)
             HubConnect();
 
-        foreach (var drive in SharedState.DiscDrives)
-            ripHubClinet.InvokeAsync("SendDiscDriveUpdate", drive)
+        foreach (var drive in _sharedState.DiscDrives)
+            _ripHubClient.InvokeAsync("SendDiscDriveUpdate", drive)
                 .GetAwaiter().GetResult();
     }
 
     private Process? RipMovie(DiscDrive drive)
     {
-        Logger.LogInformation($"Drive {drive.Id} has started ripping");
+        _logger.LogInformation($"Drive {drive.Id} has started ripping");
 
         var logFileName = $"log_makemkv_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
         var logFilePath = Path.Combine(drive.LogDirectoryPath, logFileName);
@@ -175,7 +175,7 @@ public class Worker : IHostedService, IDisposable
     private Process RipMusic(DiscDrive drive)
     {
         // abcde -d /dev/sr1 -o flac -j 4 -N -D 2>logfile
-        Logger.LogInformation($"Drive {drive.Id} has started ripping");
+        _logger.LogInformation($"Drive {drive.Id} has started ripping");
 
         var logFileName = $"log_abcde_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.txt";
         var logFilePath = Path.Combine(drive.LogDirectoryPath, logFileName);
@@ -196,30 +196,30 @@ public class Worker : IHostedService, IDisposable
 
     private void MoveFile(object state)
     {
-        if (!SharedState.FilesToMove.IsEmpty)
+        if (!_sharedState.FilesToMove.IsEmpty)
         {
-            SharedState.MoveProcesses.RemoveAll(m => m.HasExited);
+            _sharedState.MoveProcesses.RemoveAll(m => m.HasExited);
 
-            var nMoves = Settings.ConcurrentMoves - SharedState.MoveProcesses.Count;
+            var nMoves = Settings.ConcurrentMoves - _sharedState.MoveProcesses.Count;
 
             if (nMoves > 0)
             {
-                for (int i = 0; i < Math.Min(nMoves, SharedState.FilesToMove.Count); i++)
+                for (int i = 0; i < Math.Min(nMoves, _sharedState.FilesToMove.Count); i++)
                 {
-                    if (SharedState.FilesToMove.TryDequeue(out string cmd))
+                    if (_sharedState.FilesToMove.TryDequeue(out string cmd))
                     {
-                        SharedState.MoveProcesses.Add(LocalSystem.Linux.ExecuteBackground(cmd));
+                        _sharedState.MoveProcesses.Add(LocalSystem.Linux.ExecuteBackground(cmd));
                     }
                 }
 
-                Logger.LogInformation($"Moving File(s)... {SharedState.FilesToMove.Count} File(s) Remaining");
+                _logger.LogInformation($"Moving File(s)... {_sharedState.FilesToMove.Count} File(s) Remaining");
             }
         }
     }
 
     private void ConfigureHubConnection()
     {
-        ripHubClinet = new HubConnectionBuilder()
+        _ripHubClient = new HubConnectionBuilder()
             .WithUrl("https://localhost:5001/hubs/rip", options =>
             {
                 options.HttpMessageHandlerFactory = (msg) =>
@@ -237,11 +237,11 @@ public class Worker : IHostedService, IDisposable
             .WithAutomaticReconnect()
             .Build();
 
-        ripHubClinet.Closed += async (error) =>
+        _ripHubClient.Closed += async (error) =>
         {
-            Logger.LogError(error, "Hub Connection Error!");
+            _logger.LogError(error, "Hub Connection Error!");
             await Task.Delay(new Random().Next(0,5) * 1000);
-            await ripHubClinet.StartAsync();
+            await _ripHubClient.StartAsync();
         };
     }
 
@@ -249,23 +249,23 @@ public class Worker : IHostedService, IDisposable
     {
         try
         {
-            ripHubClinet.StartAsync()
+            _ripHubClient.StartAsync()
                 .GetAwaiter().GetResult();
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error Connecting to Hub!");
+            _logger.LogError(ex, "Error Connecting to Hub!");
         }
     }
     
     public void Dispose()
     {
-        ripHubClinet.StopAsync()
+        _ripHubClient.StopAsync()
             .GetAwaiter().GetResult();
-        ripHubClinet.DisposeAsync()
+        _ripHubClient.DisposeAsync()
             .GetAwaiter().GetResult();
         
-        DiscTimer?.Dispose();
-        MoveTimer?.Dispose();
+        _discTimer?.Dispose();
+        _moveTimer?.Dispose();
     }
 }

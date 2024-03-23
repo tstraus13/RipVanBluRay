@@ -54,12 +54,14 @@ public class DiscDrive
     
     public DiscDrive()
     {
-
     }
 
     public DiscDrive(string id)
     {
         Id = id;
+        
+        Directory.CreateDirectory(LogDirectoryPath);
+        Directory.CreateDirectory(TempDirectoryPath);
     }
 
     public string Path
