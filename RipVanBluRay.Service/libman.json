@@ -24,7 +24,7 @@
       "destination": "wwwroot/lib/bootstrap-icons/"
     },
     {
-      "library": "microsoft-signalr@6.0.11",
+      "library": "microsoft-signalr@8.0.0",
       "destination": "wwwroot/lib/signalr/"
     }
   ]

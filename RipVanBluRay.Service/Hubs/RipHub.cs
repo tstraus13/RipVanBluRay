@@ -25,6 +25,9 @@ public class RipHub : Hub
     public override Task OnDisconnectedAsync(Exception? exception)
     {
         _logger.LogInformation("RipHub - Connection Disconnected - {ConnectionId}", Context.ConnectionId);
+        
+        if (exception != null)
+            _logger.LogError(exception, "HUB ERROR!");
 
         return base.OnDisconnectedAsync(exception);
     }
