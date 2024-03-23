@@ -220,7 +220,7 @@ public class Worker : IHostedService, IDisposable
     private void ConfigureHubConnection()
     {
         _ripHubClient = new HubConnectionBuilder()
-            .WithUrl("https://localhost:5001/hubs/rip", options =>
+            .WithUrl("http://localhost:5000/hubs/rip", options =>
             {
                 options.HttpMessageHandlerFactory = (msg) =>
                 {
