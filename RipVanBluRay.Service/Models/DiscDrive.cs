@@ -77,7 +77,8 @@ public class DiscDrive
         }
     }
 
-    public bool DiscPresent => LocalSystem.Linux.Execute($"udevadm info -q property {Path}").StdOut.Contains("ID_CDROM_MEDIA=1");
+    public bool DiscPresent => LocalSystem.Linux.Execute($"udevadm info -q property {Path}")
+        .StdOut.Contains("ID_CDROM_MEDIA=1");
 
     public MediaType DiscMedia
     {
