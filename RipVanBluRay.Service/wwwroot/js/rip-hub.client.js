@@ -48,8 +48,8 @@ ripHubClient.on("discDriveUpdate", (drive) => {
     
     logLines.forEach(element => element.trim() === '' || element === undefined ? '' : logHtml += '<span>' + element + '</span>');
     
-    $('.modal-body').html(logHtml);
-    $('.modal-title').text(drive.id + ' Log File');
+    $('#' + drive.id + '-log-modal .modal-body').html(logHtml);
+    $('#' + drive.id + '-log-modal .modal-title').text(drive.id + ' Log File');
     
     if (previousDiscPresent === 'No' && drive.discPresent) {
         CD_START(drive.id);

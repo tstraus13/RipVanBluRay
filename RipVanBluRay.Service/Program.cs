@@ -8,7 +8,10 @@ builder.Services.AddSingleton(new SharedState());
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.MaximumReceiveMessageSize = 1024 * 1024 * 4; // 4MB
+});
 builder.Services.AddHostedService<Worker>();
 
 var app = builder.Build();

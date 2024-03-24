@@ -1,26 +1,26 @@
 @model RipVanBluRay.Models.SharedState;
 
-<div class="modal fade" id="log-modal" tabindex="-1" role="dialog" aria-labelledby="log-modal" aria-hidden="true">
-  <div class="modal-dialog modal-fullscreen" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="log-modal"></h5>
-      </div>
-      <div class="modal-body">
-        
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 @for (var i = 0; i < Model.DiscDrives.Count(); i++)
 {
     var drive = Model.DiscDrives[i];
 
-    <div class="row @(i == 0 ? "border-top" : "") border-start border-top border-end border-bottom">
+    <div id="@drive.Id-log-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="log-modal" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                </div>
+                <div class="modal-body">
+        
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row border-start border-top border-end border-bottom mb-3">
         <div class="col-lg-2">
             <img id="@drive.Id-cdrom-image" class="img-fluid@(drive.DiscPresent || drive.InUse ? " rotate-middle" : "")" src="~/images/cdrom.png" alt="CD-ROM">
         </div>
@@ -53,7 +53,7 @@
             </div>
         </div>
         <div class="col-lg-2 text-center align-self-center">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#log-modal" onclick="LOG_FILE('@drive.Id')">Log File</button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#@drive.Id-log-modal" onclick="LOG_FILE('@drive.Id')">Log File</button>
         </div>
     </div>
 }

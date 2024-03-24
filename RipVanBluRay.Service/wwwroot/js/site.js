@@ -45,8 +45,8 @@ function CD_END(id) {
 
 async function LOG_FILE(id) {
 
-    $('.modal-body').html('');
-    $('.modal-title').text('');
+    $('#' + id + '-log-modal .modal-body').html('');
+    $('#' + id + '-log-modal .modal-title').text('');
     
     await ripHubClient.invoke('RequestDiscDriveUpdate', id);
     

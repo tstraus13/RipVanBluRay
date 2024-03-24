@@ -72,9 +72,8 @@ public class DiscDrive
             {
                 return $"/dev/{Id}";
             }
-
-            else
-                return null;
+            
+            return null;
         }
     }
 
@@ -102,10 +101,13 @@ public class DiscDrive
     {
         get
         {
+            if (!DiscPresent)
+                return 0;
+            
             if (long.TryParse(LocalSystem.Linux.Execute($"blockdev --getsize64 {Path}").StdOut, out long result))
                 return result;
-            else
-                return 0;
+            
+            return 0;
         }
     }
 
