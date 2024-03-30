@@ -24,11 +24,14 @@ public class DiscDrive
     {
         get
         {
+            if (!DiscPresent)
+                return string.Empty;
+
             var dir = new DirectoryInfo(LogDirectoryPath);
             var file = dir.GetFiles().MaxBy(f => f.CreationTime);
 
             if (file == null)
-                return "";
+                return string.Empty;
 
             return System.IO.File.ReadAllText(file.FullName);
         }
