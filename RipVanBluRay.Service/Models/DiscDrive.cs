@@ -24,6 +24,9 @@ public class DiscDrive
     {
         get
         {
+            if (_ejecting)
+                return string.Empty;
+
             if (!DiscPresent)
                 return string.Empty;
 
@@ -41,6 +44,12 @@ public class DiscDrive
     {
         get
         {
+            if (_ejecting)
+                return 0;
+
+            if (!DiscPresent)
+                return 0;
+
             var dir = new DirectoryInfo(TempDirectoryPath);
             var file = dir.GetFiles().MaxBy(f => f.CreationTime);
 
@@ -55,19 +64,7 @@ public class DiscDrive
 
     public int CurrentRipSizeGigaBytes => (int) Math.Round(CurrentRipSizeBytes / 1000000000.0);
     
-    public DiscDrive()
-    {
-    }
-
-    public DiscDrive(string id)
-    {
-        Id = id;
-        
-        Directory.CreateDirectory(LogDirectoryPath);
-        Directory.CreateDirectory(TempDirectoryPath);
-    }
-
-    public string Path
+        public string Path
     {
         get
         {
@@ -105,6 +102,9 @@ public class DiscDrive
     {
         get
         {
+            if (_ejecting)
+                return 0;
+
             if (!DiscPresent)
                 return 0;
             
@@ -119,9 +119,28 @@ public class DiscDrive
 
     public int SizeGigaBytes => (int) Math.Round(SizeBytes / 1000000000.0);
 
+    private bool _ejecting;
+
+    public DiscDrive()
+    {
+        _ejecting = false;
+    }
+
+    public DiscDrive(string id)
+    {
+        Id = id;
+        _ejecting = false;
+        
+        Directory.CreateDirectory(LogDirectoryPath);
+        Directory.CreateDirectory(TempDirectoryPath);
+    }
+
     public void Eject()
     {
-        LocalSystem.Linux.ExecuteBackground($"eject {Path}");
+        _ejecting = true;
+        LocalSystem.Linux.Execute($"eject {Path}");
+        Task.Delay(3000).GetAwaiter().GetResult();
+        _ejecting = false;
     }
 }
 
