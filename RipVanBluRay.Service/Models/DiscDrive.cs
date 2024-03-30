@@ -25,7 +25,7 @@ public class DiscDrive
         get
         {
             var dir = new DirectoryInfo(LogDirectoryPath);
-            var file = dir.GetFiles().MinBy(f => f.CreationTime);
+            var file = dir.GetFiles().MaxBy(f => f.CreationTime);
 
             if (file == null)
                 return "";
@@ -39,7 +39,7 @@ public class DiscDrive
         get
         {
             var dir = new DirectoryInfo(TempDirectoryPath);
-            var file = dir.GetFiles().MinBy(f => f.CreationTime);
+            var file = dir.GetFiles().MaxBy(f => f.CreationTime);
 
             if (file == null)
                 return 0;
