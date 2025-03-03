@@ -35,10 +35,10 @@ public class Worker : IHostedService, IDisposable
         _logger.LogInformation("Rip Van BluRay Service running.");
 
         if (!Settings.IsMakeMKVAvailable)
-            _logger.LogInformation($"makemkvcon executable was not found! Will not Rip any DVDs, BluRays, or UHD Discs");
+            _logger.LogWarning("makemkvcon executable was not found! Will not Rip any DVDs, BluRays, or UHD Discs");
 
         if (!Settings.IsAbcdeAvailable)
-            _logger.LogInformation($"abcde executable was not found! Will not Rip any Music CDs");
+            _logger.LogWarning("abcde executable was not found! Will not Rip any Music CDs");
 
         _discTimer = new Timer(CheckDiscDrives, null, TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(20));
         _moveTimer = new Timer(MoveFile, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));

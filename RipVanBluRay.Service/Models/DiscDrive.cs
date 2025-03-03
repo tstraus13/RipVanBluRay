@@ -14,7 +14,7 @@ public class DiscDrive
     public bool InUse => RipProcess != null;
     
     [JsonIgnore]
-    public Process RipProcess {get; set;}
+    public Process? RipProcess {get; set;}
 
     public string TempDirectoryPath => System.IO.Path.Combine(Settings.TempDirectory, Id);
 
